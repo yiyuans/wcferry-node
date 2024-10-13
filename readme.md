@@ -1,6 +1,6 @@
-# WeChat Core SDK for Node.js
+# WeChat Core SDK for Node.js ![npm version](https://img.shields.io/npm/v/@zippybee/wechatcore.svg)
 
-![npm version](https://img.shields.io/npm/v/@zippybee/wcf-cli.svg)
+# WCF-CLI ![npm version](https://img.shields.io/npm/v/@zippybee/wcf-cli.svg)
 
 > 注意：
 
@@ -16,7 +16,7 @@ npm i @zippybee/wechatcore
 
 ### 示例代码
 
-详见examples/ding-dong-bot.js
+详见 examples/ding-dong-bot.js
 
 ```javascript
 const { Wcferry } = require('@zippybee/wechatcore');
@@ -36,7 +36,7 @@ const off = client.listening((msg) => {
 
 ### 运行
 
-在PC上启动WeChat客户端并登录，运行`node ./examples/ding-dong-bot.js`
+在 PC 上启动 WeChat 客户端并登录，运行`node ./examples/ding-dong-bot.js`
 
 ## Wcferry Option
 
@@ -140,7 +140,7 @@ zippy-wcf stop  //关闭wcf服务
 
 #### 参数
 
-- `options` *(可选)*: `WcferryOptions` 类型的配置选项。
+- `options` _(可选)_: `WcferryOptions` 类型的配置选项。
 
 #### 示例
 
@@ -219,7 +219,7 @@ const wcferry = new Wcferry({
 通过 wxid 查询微信号昵称等信息。
 
 - **参数**:
-  - `wxid` *(必需)*: 要查询的微信号 wxid。
+  - `wxid` _(必需)_: 要查询的微信号 wxid。
 - **返回值**: `Contact | undefined` - 如果找到联系人，返回 `Contact` 对象；否则返回 `undefined`。
 
 #### `getChatRooms(): Contact[]`
@@ -239,8 +239,8 @@ const wcferry = new Wcferry({
 获取群成员列表。
 
 - **参数**:
-  - `roomid` *(必需)*: 群的 id。
-  - `times` *(可选)*: 重试次数，默认值为 `5`。
+  - `roomid` _(必需)_: 群的 id。
+  - `times` _(可选)_: 重试次数，默认值为 `5`。
 - **返回值**: `Promise<Record<string, string>>` - 返回一个包含群成员 wxid 和昵称的对象。
 
 #### `getAliasInChatRoom(wxid: string, roomid: string): string | undefined`
@@ -248,8 +248,8 @@ const wcferry = new Wcferry({
 获取群成员的群名片。
 
 - **参数**:
-  - `wxid` *(必需)*: 成员的 wxid。
-  - `roomid` *(必需)*: 群的 id。
+  - `wxid` _(必需)_: 成员的 wxid。
+  - `roomid` _(必需)_: 群的 id。
 - **返回值**: `string | undefined` - 如果找到，返回成员的群名片；否则返回 `undefined`。
 
 #### `getNickName(...wxids: string[]): Array<string | undefined>`
@@ -257,7 +257,7 @@ const wcferry = new Wcferry({
 通过 wxid 获取昵称。
 
 - **参数**:
-  - `wxids` *(必需)*: 一个或多个 wxid。
+  - `wxids` _(必需)_: 一个或多个 wxid。
 - **返回值**: `Array<string | undefined>` - 返回一个包含昵称的数组。
 
 ---
@@ -281,7 +281,7 @@ const wcferry = new Wcferry({
 刷新朋友圈。
 
 - **参数**:
-  - `id` *(必需)*: 开始 id，`0` 表示最新页（基于字符串的 uint64）。
+  - `id` _(必需)_: 开始 id，`0` 表示最新页（基于字符串的 uint64）。
 - **返回值**: `number` - `1` 表示成功，其他表示失败。
 
 #### `sendTxt(msg: string, receiver: string, aters?: string): number`
@@ -289,9 +289,9 @@ const wcferry = new Wcferry({
 发送文本消息。
 
 - **参数**:
-  - `msg` *(必需)*: 要发送的消息内容，支持换行符 `\n`。如果 @ 人，需要在 `aters` 参数中指定。
-  - `receiver` *(必需)*: 消息接收人，wxid 或 roomid。
-  - `aters` *(可选)*: 要 @ 的 wxid，多个用逗号分隔；`notify@all` 表示 @所有人。
+  - `msg` _(必需)_: 要发送的消息内容，支持换行符 `\n`。如果 @ 人，需要在 `aters` 参数中指定。
+  - `receiver` _(必需)_: 消息接收人，wxid 或 roomid。
+  - `aters` _(可选)_: 要 @ 的 wxid，多个用逗号分隔；`notify@all` 表示 @所有人。
 - **返回值**: `number` - `0` 表示成功，其他表示失败。
 
 #### `sendImage(image: string | Buffer | { type: 'Buffer'; data: number[] } | FileSavableInterface, receiver: string): Promise<number>`
@@ -299,8 +299,8 @@ const wcferry = new Wcferry({
 发送图片消息。
 
 - **参数**:
-  - `image` *(必需)*: 图片资源的位置，可以是本地路径、URL、Buffer、特定对象或 `FileSavableInterface` 实例。
-  - `receiver` *(必需)*: 消息接收人，wxid 或 roomid。
+  - `image` _(必需)_: 图片资源的位置，可以是本地路径、URL、Buffer、特定对象或 `FileSavableInterface` 实例。
+  - `receiver` _(必需)_: 消息接收人，wxid 或 roomid。
 - **返回值**: `Promise<number>` - `0` 表示成功，其他表示失败。
 
 #### `sendFile(file: string | Buffer | { type: 'Buffer'; data: number[] } | FileSavableInterface, receiver: string): Promise<number>`
@@ -308,8 +308,8 @@ const wcferry = new Wcferry({
 发送文件消息。
 
 - **参数**:
-  - `file` *(必需)*: 文件资源的位置，可以是本地路径、URL、Buffer、特定对象或 `FileSavableInterface` 实例。
-  - `receiver` *(必需)*: 消息接收人，wxid 或 roomid。
+  - `file` _(必需)_: 文件资源的位置，可以是本地路径、URL、Buffer、特定对象或 `FileSavableInterface` 实例。
+  - `receiver` _(必需)_: 消息接收人，wxid 或 roomid。
 - **返回值**: `Promise<number>` - `0` 表示成功，其他表示失败。
 
 #### `sendRichText(desc: Omit<ReturnType<wcf.RichText['toObject']>, 'receiver'>, receiver: string): number`
@@ -317,8 +317,8 @@ const wcferry = new Wcferry({
 发送富文本消息。
 
 - **参数**:
-  - `desc` *(必需)*: 富文本描述对象，不包含 `receiver` 属性。
-  - `receiver` *(必需)*: 接收人，wxid 或 roomid。
+  - `desc` _(必需)_: 富文本描述对象，不包含 `receiver` 属性。
+  - `receiver` _(必需)_: 接收人，wxid 或 roomid。
 - **返回值**: `number` - `0` 表示成功，其他表示失败。
 
 #### `sendPat(roomid: string, wxid: string): number`
@@ -326,8 +326,8 @@ const wcferry = new Wcferry({
 发送“拍一拍”消息。
 
 - **参数**:
-  - `roomid` *(必需)*: 群的 id。
-  - `wxid` *(必需)*: 要拍的群成员的 wxid。
+  - `roomid` _(必需)_: 群的 id。
+  - `wxid` _(必需)_: 要拍的群成员的 wxid。
 - **返回值**: `number` - `1` 表示成功，其他表示失败。
 
 #### `revokeMsg(msgid: string): number`
@@ -335,7 +335,7 @@ const wcferry = new Wcferry({
 撤回消息。
 
 - **参数**:
-  - `msgid` *(必需)*: 消息 id（基于字符串的 uint64）。
+  - `msgid` _(必需)_: 消息 id（基于字符串的 uint64）。
 - **返回值**: `number` - `1` 表示成功，其他表示失败。
 
 #### `forwardMsg(msgid: string, receiver: string): number`
@@ -343,8 +343,8 @@ const wcferry = new Wcferry({
 转发消息。
 
 - **参数**:
-  - `msgid` *(必需)*: 消息 id（基于字符串的 uint64）。
-  - `receiver` *(必需)*: 消息接收人，wxid 或 roomid。
+  - `msgid` _(必需)_: 消息 id（基于字符串的 uint64）。
+  - `receiver` _(必需)_: 消息接收人，wxid 或 roomid。
 - **返回值**: `number` - `1` 表示成功，其他表示失败。
 
 ---
@@ -362,7 +362,7 @@ const wcferry = new Wcferry({
 获取指定数据库中的所有表。
 
 - **参数**:
-  - `db` *(必需)*: 数据库名称。
+  - `db` _(必需)_: 数据库名称。
 - **返回值**: `DbTable[]` - 表名称数组。
 
 #### `dbSqlQuery(db: string, sql: string): Record<string, string | number | Buffer | undefined>[]`
@@ -370,8 +370,8 @@ const wcferry = new Wcferry({
 执行 SQL 查询。
 
 - **参数**:
-  - `db` *(必需)*: 数据库名称。
-  - `sql` *(必需)*: 要执行的 SQL 语句。
+  - `db` _(必需)_: 数据库名称。
+  - `sql` _(必需)_: 要执行的 SQL 语句。
 - **返回值**: `Record<string, string | number | Buffer | undefined>[]` - 查询结果数组。
 
 ---
@@ -383,7 +383,7 @@ const wcferry = new Wcferry({
 注册消息回调监听函数。当注册的监听函数数量大于 0 时，自动调用 `enableMsgReceiving`；否则自动调用 `disableMsgReceiving`。
 
 - **参数**:
-  - `callback` *(必需)*: 监听函数，接收一个 `Message` 对象。
+  - `callback` _(必需)_: 监听函数，接收一个 `Message` 对象。
 - **返回值**: `() => void` - 一个函数，用于注销监听。
 
 #### 示例
@@ -406,11 +406,11 @@ unsubscribe();
 下载图片消息并保存为 MP3。
 
 - **参数**:
-  - `msgid` *(必需)*: 消息中的 id。
-  - `dir` *(必需)*: 保存图片的目录（目录不存在会出错）。
-  - `extra` *(可选)*: 消息中的 extra，如果为空，将自动通过 `msgid` 获取。
-  - `thumb` *(可选)*: 消息中的 thumb。
-  - `times` *(可选)*: 超时时间（秒），默认值为 `30`。
+  - `msgid` _(必需)_: 消息中的 id。
+  - `dir` _(必需)_: 保存图片的目录（目录不存在会出错）。
+  - `extra` _(可选)_: 消息中的 extra，如果为空，将自动通过 `msgid` 获取。
+  - `thumb` _(可选)_: 消息中的 thumb。
+  - `times` _(可选)_: 超时时间（秒），默认值为 `30`。
 - **返回值**: `Promise<string>` - 成功返回存储路径；失败时抛出错误。
 
 #### `getAudioMsg(msgid: string, dir: string, times?: number): Promise<string>`
@@ -418,9 +418,9 @@ unsubscribe();
 获取语音消息并转成 MP3。
 
 - **参数**:
-  - `msgid` *(必需)*: 语音消息 id。
-  - `dir` *(必需)*: MP3 保存目录（目录不存在会出错）。
-  - `times` *(可选)*: 超时时间（秒），默认值为 `3`。
+  - `msgid` _(必需)_: 语音消息 id。
+  - `dir` _(必需)_: MP3 保存目录（目录不存在会出错）。
+  - `times` _(可选)_: 超时时间（秒），默认值为 `3`。
 - **返回值**: `Promise<string>` - 成功返回存储路径；失败时抛出错误。
 
 #### `getOCRResult(extra: string, times?: number): Promise<string>`
@@ -428,8 +428,8 @@ unsubscribe();
 获取 OCR 结果。
 
 - **参数**:
-  - `extra` *(必需)*: 待识别的图片路径，消息里的 extra。
-  - `times` *(可选)*: 重试次数，默认值为 `2`。
+  - `extra` _(必需)_: 待识别的图片路径，消息里的 extra。
+  - `times` _(可选)_: 重试次数，默认值为 `2`。
 - **返回值**: `Promise<string>` - OCR 结果字符串。
 
 ---
@@ -441,9 +441,9 @@ unsubscribe();
 通过好友申请。
 
 - **参数**:
-  - `v3` *(必需)*: 加密用户名（好友申请消息里 v3 开头的字符串）。
-  - `v4` *(必需)*: Ticket（好友申请消息里 v4 开头的字符串）。
-  - `scene` *(可选)*: 申请方式（好友申请消息里的 scene），默认为 `30`（扫码添加）。
+  - `v3` _(必需)_: 加密用户名（好友申请消息里 v3 开头的字符串）。
+  - `v4` _(必需)_: Ticket（好友申请消息里 v4 开头的字符串）。
+  - `scene` _(可选)_: 申请方式（好友申请消息里的 scene），默认为 `30`（扫码添加）。
 - **返回值**: `number` - `1` 表示成功，其他表示失败。
 
 #### `receiveTransfer(wxid: string, transferid: string, transactionid: string): number`
@@ -451,9 +451,9 @@ unsubscribe();
 接收转账。
 
 - **参数**:
-  - `wxid` *(必需)*: 转账消息里的发送人 wxid。
-  - `transferid` *(必需)*: 转账消息里的 transferid。
-  - `transactionid` *(必需)*: 转账消息里的 transactionid。
+  - `wxid` _(必需)_: 转账消息里的发送人 wxid。
+  - `transferid` _(必需)_: 转账消息里的 transferid。
+  - `transactionid` _(必需)_: 转账消息里的 transactionid。
 - **返回值**: `number` - `1` 表示成功，其他表示失败。
 
 #### `send_xml_message(content: string, wx_id: string): number | undefined`
@@ -461,8 +461,8 @@ unsubscribe();
 发送 XML 数据。
 
 - **参数**:
-  - `content` *(必需)*: XML 文件路径或 XML 字符串。
-  - `wx_id` *(必需)*: 接收人的 wxid。
+  - `content` _(必需)_: XML 文件路径或 XML 字符串。
+  - `wx_id` _(必需)_: 接收人的 wxid。
 - **返回值**: `number | undefined` - `1` 表示成功，其他表示失败，或在某些情况下返回 `undefined`。
 
 ---
@@ -512,7 +512,7 @@ export interface WcferryOptions {
 
 以下方法已弃用，不建议继续使用：
 
-- `sendXML`: 发送 XML 数据（不支持）。
+- `sendXML`: 发送 XML 数据（不支持）。请使用当前目录下的 send_xml 示例代码发送 xml
 - `sendEmotion`: 发送表情消息（不支持）。
 - `downloadAttach`: 下载附件（图片、视频、文件）；建议使用 `downloadImage` 替代。
 - `decryptImage`: 解密图片；建议使用 `downloadImage` 替代。
