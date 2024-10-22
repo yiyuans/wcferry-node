@@ -33,6 +33,8 @@ export interface WcferryOptions {
 
   // sign
   sigint?: boolean; //是否监听ctrl+c 事件
+  // 微信文件目录
+  wechat_dir?: string; // 默认为C:/Users/Administrator/Documents/WeChat Files  只需填写WeChat Files 前面的路径 按照linux路径格式填写 不需要反斜杠
 }
 
 const logger = debug('wcferry:client');
@@ -65,6 +67,7 @@ export class Wcferry {
       wcf_path: options?.wcf_path || path.join(__dirname, '../wcf-sdk/sdk.dll'),
       debug: options?.debug || false,
       sigint: options?.sigint || false,
+      wechat_dir: options?.wechat_dir || path.win32.join(os.homedir(), 'Documents', 'WeChat Files'),
     };
 
     ensureDirSync(this.options.cacheDir);
@@ -661,9 +664,6 @@ export class Wcferry {
     return rsp.status;
   }
 
-  // TODO: get correct wechat files directory somewhere?
-  private readonly UserDir = path.join(os.homedir(), 'Documents', 'WeChat Files');
-
   private getMsgAttachments(msgid: string): {
     extra?: string;
     thumb?: string;
@@ -683,8 +683,8 @@ export class Wcferry {
     const thumb = propertyMap[eb.com.iamteer.wcf.Extra.PropertyKey.Thumb];
 
     return {
-      extra: extra ? path.resolve(this.UserDir, extra) : '',
-      thumb: thumb ? path.resolve(this.UserDir, thumb) : '',
+      extra: extra ? path.win32.join(this.options.wechat_dir, extra) : '',
+      thumb: thumb ? path.win32.join(this.options.wechat_dir, thumb) : '',
     };
   }
 
