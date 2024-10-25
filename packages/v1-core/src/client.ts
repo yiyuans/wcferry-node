@@ -24,7 +24,7 @@ export interface WcferryOptions {
   // 当使用wcferry.on(...)监听消息时，是否接受朋友圈消息
   recvPyq?: boolean;
   // 微信文件目录
-  wechat_dir?: string; // 默认为C:/Users/Administrator/Documents/WeChat Files  只需填写WeChat Files 前面的路径 按照linux路径格式填写 不需要反斜杠
+  wechat_dir?: string; // 默认为C:/Users/Administrator/Documents/WeChat Files   按照linux路径格式填写 不需要反斜杠 填写微信客户端文件管理的路径
 }
 
 const logger = debug('wcferry:client');
@@ -41,18 +41,16 @@ export class Wcferry {
   private isMsgReceiving = false;
   private msgDispose?: () => void;
   private socket: Socket;
-  private readonly localMode;
   private readonly msgEventSub = new EventEmitter();
   private options: Required<WcferryOptions>;
   constructor(options?: WcferryOptions) {
-    this.localMode = !options?.host;
     this.options = {
       port: options?.port || 10086,
       host: options?.host || '127.0.0.1',
       socketOptions: options?.socketOptions ?? {},
       cacheDir: options?.cacheDir || createTmpDir(),
       recvPyq: !!options?.recvPyq,
-      wechat_dir: options?.wechat_dir || path.win32.join('C:/Users/Administrator/Documents', 'WeChat Files'),
+      wechat_dir: options?.wechat_dir || path.win32.join(os.homedir(), 'Documents', 'WeChat Files'),
     };
 
     ensureDirSync(this.options.cacheDir);
@@ -668,7 +666,6 @@ export class Wcferry {
     if (this.downloadAttach(msgid, msgAttachments.thumb, msgAttachments.extra) !== 0) {
       return Promise.reject('Failed to download attach');
     }
-    console.log(dir, 671);
     for (let cnt = 0; cnt < times; cnt++) {
       const path = this.decryptImage(msgAttachments.extra || '', dir);
 

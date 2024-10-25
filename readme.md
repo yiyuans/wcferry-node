@@ -48,11 +48,11 @@ const off = client.listening((msg) => {
 | service (启动模式为 service 模式，此模式仅做注入 dll 使用 其他业务需自行实现) | `false`  | false                                         | `bool`   |
 | wcf_path (指定 wcf 工作目录 一般用于 docker 挂载目录使用)    | `false`  | `path.join(__dirname, '../wcf-sdk/sdk.dll')`  | `string` |
 | sigint(是否监听终端ctrl+c 终端信号)                          | `false`  | `false`                                       | `bool`   |
-| wechat_dir(微信安装目录)                                     | `false`  | C:/Users/Administrator/Documents/WeChat Files | `string` |
+| wechat_dir(微信文件管理目录)                                 | `false`  | C:/Users/Administrator/Documents/WeChat Files | `string` |
 
 > [!CAUTION]
 >
-> wechat_dir 安装目录只需填写 WeChat Files 前部分即可   例如 完整路径 D:/data/tenter/wechat/WeChat Files  wechat_dir 填写  D:/data/tenter/wechat 即可 l路径规范按照linux / 填写 无需按照win  \ 书写
+> wechat_dir  路径规范按照linux / 填写 无需按照win  \ 书写  （文件管理目录详见微信客户端）
 
 
 
@@ -499,6 +499,8 @@ export interface WcferryOptions {
   debug?: boolean;
   /** 是否监听 Ctrl+C 事件 */
   sigint?: boolean;
+    /** 微信客户端文件管理目录 */
+  wechat_dir?:string;
 }
 ```
 

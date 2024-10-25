@@ -34,7 +34,7 @@ export interface WcferryOptions {
   // sign
   sigint?: boolean; //是否监听ctrl+c 事件
   // 微信文件目录
-  wechat_dir?: string; // 默认为C:/Users/Administrator/Documents/WeChat Files  只需填写WeChat Files 前面的路径 按照linux路径格式填写 不需要反斜杠
+  wechat_dir?: string; // 默认为C:/Users/Administrator/Documents/WeChat Files   填写微信文件管理目录
 }
 
 const logger = debug('wcferry:client');
@@ -129,12 +129,20 @@ export class Wcferry {
   private get msgListenerCount() {
     return this.msgEventSub.listenerCount('wxmsg');
   }
+  private isRunSdk() {
+    const wan_ip = this.getLocalIPAddress();
+    if (this.options.service || ['localhost', '127.0.0.1', wan_ip].includes(this.options.host)) return true;
+    return false;
+  }
 
   // 开启service 模式
   private startService() {
     const initResult = this.wechatInitSdk?.(this.options.debug, this.options.port);
     if (initResult !== 0) {
-      console.error('wcf=====>faild');
+      console.error('WCF =====>Failed to start');
+    }
+    if (this.options.service) {
+      console.log('WCF =====>Service started');
     }
   }
 
@@ -145,9 +153,24 @@ export class Wcferry {
     return result;
   }
 
+  public getLocalIPAddress() {
+    const interfaces = os.networkInterfaces();
+    for (const interfaceName in interfaces) {
+      const addresses = interfaces[interfaceName] || [];
+      for (const address of addresses) {
+        if (address.family === 'IPv4' && !address.internal) {
+          return address.address;
+        }
+      }
+    }
+    return '';
+  }
+
   start() {
     try {
-      this.startService();
+      if (this.isRunSdk()) {
+        this.startService();
+      }
       if (this.options.service) return;
       this.socket.connect(this.createUrl());
       this.trapOnExit();
