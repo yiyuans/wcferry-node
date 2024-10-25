@@ -92,7 +92,7 @@ const off = client.on((msg) => {
 ```
 npm i @zippybee/wcf-cli -g
 
-zippy-wcf start -p 10086   //启动wcf服务    -p 运行端口   -d wcf dll 所在目录 默认不用指定
+zippy-wcf start -p 10086   //启动wcf服务    -p 运行端口   -d wcf dll 所在目录 默认不用指定 -w 微信客户端文件目录 
 
 zippy-wcf stop  //关闭wcf服务
 ```
