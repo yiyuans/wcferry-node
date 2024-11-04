@@ -8,8 +8,8 @@ const PROTO_DIR = path.join(process.cwd(), './proto');
 const win32 = process.platform === 'win32' ? '.CMD' : '';
 const PROTO_GENERATED = path.join(process.cwd(), './src/proto');
 const PROTO_LINKS = [
-  `https://gh-proxy.com/https://raw.githubusercontent.com/lich0821/WeChatFerry/${version || 'master'}/WeChatFerry/rpc/proto/wcf.proto`,
-  `https://gh-proxy.com/https://raw.githubusercontent.com/lich0821/WeChatFerry/${version || 'master'}/clients/python/roomdata.proto`,
+  `https://raw.githubusercontent.com/lich0821/WeChatFerry/${version || 'master'}/WeChatFerry/rpc/proto/wcf.proto`,
+  `https://raw.githubusercontent.com/lich0821/WeChatFerry/${version || 'master'}/clients/python/roomdata.proto`,
 ];
 
 // Function to ensure directory exists

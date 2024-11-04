@@ -33,7 +33,7 @@ const downloadLatest = async () => {
     }
 
     const repourl = response.data.assets[0].browser_download_url;
-    const turl = `https://gh-proxy.com/${repourl}`;
+    const turl = `${repourl}`;
     console.log(`Get latest release download link: ${turl}`);
 
     const filename = path.basename(turl);
