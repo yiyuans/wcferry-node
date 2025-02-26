@@ -4,7 +4,6 @@ import { EventEmitter } from 'events';
 import { createTmpDir, ensureDirSync, sleep, uint8Array2str, type ToPlainType } from './utils';
 import { FileRef, FileSavableInterface } from './file-ref';
 import { Message } from './message';
-import * as rd from './proto/roomdata';
 import * as eb from './proto/extrabyte';
 import koffi from 'koffi';
 import debug from 'debug';
@@ -143,7 +142,7 @@ export class Wcferry {
       console.error('WCF =====>Failed to start');
     }
     if (this.options.service) {
-      console.log('WCF =====>Service started');
+      console.log('\x1b[37m\x1b[42m%s\x1b[0m', `WCF-SERVER:${wcfInfo.version}`);
     }
   }
 
@@ -174,7 +173,7 @@ export class Wcferry {
       }
       if (this.options.service) return;
       this.socket.connect(this.createUrl());
-      console.log(`WCF-SDK:${wcfInfo.version}`);
+      console.log('\x1b[37m\x1b[42m%s\x1b[0m', `WCF-SDK:${wcfInfo.version}`);
       this.trapOnExit();
       if (this.msgListenerCount > 0) {
         this.enableMsgReceiving();
@@ -338,8 +337,7 @@ export class Wcferry {
       await sleep();
       return this.getChatRoomMembers(roomid, times - 1) ?? {};
     }
-
-    const r = rd.com.iamteer.wcf.RoomData.deserialize(room['RoomData'] as Buffer);
+    const r = wcf.RoomData.deserialize(room['RoomData'] as Buffer);
 
     const userRds = this.dbSqlQuery('MicroMsg.db', 'SELECT UserName, NickName FROM Contact;');
 
@@ -359,8 +357,7 @@ export class Wcferry {
     if (!room) {
       return undefined;
     }
-
-    const roomData = rd.com.iamteer.wcf.RoomData.deserialize(room['RoomData'] as Buffer);
+    const roomData = wcf.RoomData.deserialize(room['RoomData'] as Buffer);
     return roomData.members.find((m) => m.wxid === wxid)?.name || this.getNickName(wxid)?.[0];
   }
 
@@ -670,7 +667,7 @@ export class Wcferry {
   }
 
   /**
-   * @deprecated 下载附件（图片、视频、文件）。这方法别直接调用，下载图片使用 `download_image`
+   * 下载附件（图片、视频、文件）。这方法别直接调用，下载图片使用 `download_image`
    * @param msgid 消息中 id
    * @param thumb 消息中的 thumb
    * @param extra 消息中的 extra
@@ -714,7 +711,7 @@ export class Wcferry {
   }
 
   /**
-   * @deprecated 解密图片。这方法别直接调用，下载图片使用 `download_image`。
+   * 解密图片。这方法别直接调用，下载图片使用 `download_image`。
    * @param src 加密的图片路径
    * @param dir 保存图片的目录
    * @returns
@@ -741,6 +738,9 @@ export class Wcferry {
    */
   async downloadImage(msgid: string, dir: string, extra?: string, thumb?: string, times = 30): Promise<string> {
     const msgAttachments = extra ? { extra, thumb } : this.getMsgAttachments(msgid);
+    if (!msgAttachments.thumb && !msgAttachments.extra) {
+      return Promise.reject('附件信息不存在，如确定ID信息无误，请自行传入extra信息，默认查询MSG0.db,如消息过多MSG表会自增,导致查询无数据');
+    }
     if (this.downloadAttach(msgid, msgAttachments.thumb, msgAttachments.extra) !== 0) {
       return Promise.reject('Failed to download attach');
     }
