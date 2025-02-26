@@ -6,6 +6,8 @@ const [file_path] = process.argv.slice(2);
 
 const folder = file_path || path.join(__dirname, '../wcf-sdk'); // 默认文件夹路径
 
+const version_path = path.join(__dirname, '../src/version.json');
+
 // 检查文件夹是否存在，不存在则创建
 const checkFolder = async (folderPath) => {
   try {
@@ -17,6 +19,10 @@ const checkFolder = async (folderPath) => {
       throw err;
     }
   }
+};
+
+const whiteVersion = (version) => {
+  fs.writeFileSync(version_path, JSON.stringify({ version }, null, 4));
 };
 
 // 下载最新版本文件
@@ -31,7 +37,7 @@ const downloadLatest = async () => {
     if (!response || !response.data || !response.data.assets || response.data.assets.length === 0) {
       throw new Error('Failed to retrieve valid data from GitHub API.');
     }
-
+    whiteVersion(response.data?.tag_name || '');
     const repourl = response.data.assets[0].browser_download_url;
     const turl = `${repourl}`;
     console.log(`Get latest release download link: ${turl}`);
