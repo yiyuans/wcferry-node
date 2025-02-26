@@ -5,6 +5,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 import copy from 'rollup-plugin-copy';
 import globFast from 'fast-glob';
+import json from '@rollup/plugin-json';
 import { cleandir } from 'rollup-plugin-cleandir';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -44,6 +45,7 @@ export default [
           },
         ],
       }),
+      json(),
       process.env.NODE_ENV == 'production' ? terser() : null,
     ],
     external: [...external, 'url', 'path', 'fs'], // 如果有需要排除的外部依赖项，可以在这里添加

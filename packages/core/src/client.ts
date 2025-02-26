@@ -11,7 +11,7 @@ import debug from 'debug';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
-import wcfInfo from './version.json';
+import * as wcfInfo from './version.json';
 export type UserInfo = ToPlainType<wcf.UserInfo>;
 export type Contact = ToPlainType<wcf.RpcContact>;
 export type DbTable = ToPlainType<wcf.DbTable>;
