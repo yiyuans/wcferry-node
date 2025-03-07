@@ -40,21 +40,19 @@ const off = client.listening((msg) => {
 
 ## Wcferry Option
 
-| 参数名称                                                     | 是否必填 | 默认值                                        | 类型     |
-| :----------------------------------------------------------- | -------- | --------------------------------------------- | -------- |
-| host(service 地址 默认启动 wcf 127.0.0.1 可填远程 service 地址) | `false`  | `''`                                          | `string` |
-| port 端口                                                    | `false`  | `10086`                                       | `number` |
-| recvPyq (是否结束朋友圈消息)                                 | `false`  | false                                         | `bool`   |
+| 参数名称                                                                      | 是否必填 | 默认值                                        | 类型     |
+| :---------------------------------------------------------------------------- | -------- | --------------------------------------------- | -------- |
+| host(service 地址 默认启动 wcf 127.0.0.1 可填远程 service 地址)               | `false`  | `''`                                          | `string` |
+| port 端口                                                                     | `false`  | `10086`                                       | `number` |
+| recvPyq (是否结束朋友圈消息)                                                  | `false`  | false                                         | `bool`   |
 | service (启动模式为 service 模式，此模式仅做注入 dll 使用 其他业务需自行实现) | `false`  | false                                         | `bool`   |
-| wcf_path (指定 wcf 工作目录 一般用于 docker 挂载目录使用)    | `false`  | `path.join(__dirname, '../wcf-sdk/sdk.dll')`  | `string` |
-| sigint(是否监听终端ctrl+c 终端信号)                          | `false`  | `false`                                       | `bool`   |
-| wechat_dir(微信文件管理目录)                                 | `false`  | C:/Users/Administrator/Documents/WeChat Files | `string` |
+| wcf_path (指定 wcf 工作目录 一般用于 docker 挂载目录使用)                     | `false`  | `path.join(__dirname, '../wcf-sdk/sdk.dll')`  | `string` |
+| sigint(是否监听终端 ctrl+c 终端信号)                                          | `false`  | `false`                                       | `bool`   |
+| wechat_dir(微信文件管理目录)                                                  | `false`  | C:/Users/Administrator/Documents/WeChat Files | `string` |
 
 > [!CAUTION]
 >
-> wechat_dir  路径规范按照linux / 填写 无需按照win  \ 书写  （文件管理目录详见微信客户端）
-
-
+> wechat_dir 路径规范按照 linux / 填写 无需按照 win \ 书写 （文件管理目录详见微信客户端）
 
 ## service 模式 （远程调用可用此模式 此模式 与 本地模式互斥）
 
@@ -92,7 +90,7 @@ const off = client.on((msg) => {
 ```
 npm i @zippybee/wcf-cli -g
 
-zippy-wcf start -p 10086   //启动wcf服务    -p 运行端口   -d wcf dll 所在目录 默认不用指定 -w 微信客户端文件目录 
+zippy-wcf start -p 10086   //启动wcf服务    -p 运行端口   -d wcf dll 所在目录 默认不用指定 -w 微信客户端文件目录
 
 zippy-wcf stop  //关闭wcf服务
 ```
@@ -125,15 +123,13 @@ zippy-wcf stop  //关闭wcf服务
    npm run build
    ```
 
-## sdk配套微信版本
+## sdk 配套微信版本
 
-| Wcferry-node                     | Wechat    |
-| -------------------------------- | --------- |
-| 1.0.xx(此版本仅支持host远程连接) | 3.9.2.23  |
-| <=2.0.15 &&  >=2.0.0             | 3.9.10.27 |
-| >=2.0.16                         | 3.9.11.25 |
-
-
+| Wcferry-node                       | Wechat    |
+| ---------------------------------- | --------- |
+| 1.0.xx(此版本仅支持 host 远程连接) | 3.9.2.23  |
+| <=2.0.15 && >=2.0.0                | 3.9.10.27 |
+| >=2.0.16                           | 3.9.11.25 |
 
 ## API 说明文档
 
@@ -509,8 +505,8 @@ export interface WcferryOptions {
   debug?: boolean;
   /** 是否监听 Ctrl+C 事件 */
   sigint?: boolean;
-    /** 微信客户端文件管理目录 */
-  wechat_dir?:string;
+  /** 微信客户端文件管理目录 */
+  wechat_dir?: string;
 }
 ```
 
@@ -570,5 +566,7 @@ export interface WcferryOptions {
 ## 致谢
 
 本项目借鉴了 并复制相关代码 特别感谢 [stkevintan](https://github.com/stkevintan) 的付出
+
+特别感谢 [查克](https://github.com/lich0821) 的付出 提供核心 SDK 支持
 
 [node-wcferry]: https://github.com/wechatferry/wechatferry
