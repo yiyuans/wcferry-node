@@ -209,6 +209,14 @@ export class Wcferry {
     const rsp = this.sendRequest(req);
     return rsp.status == 1;
   }
+  // 获取登录二维码
+  getLoginQrCode(): string {
+    const req = new wcf.Request({
+      func: wcf.Functions.FUNC_REFRESH_QRCODE,
+    });
+    const rsp = this.sendRequest(req);
+    return rsp.str;
+  }
 
   /**获取登录账号wxid */
   getSelfWxid(): string {
