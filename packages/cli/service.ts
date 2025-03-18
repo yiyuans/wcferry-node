@@ -12,7 +12,7 @@ function createServer() {
 
   fastify.get('/start', async (request, reply) => {
     if (PortIsRun(wcf_port)) {
-      return { message: 'Service already started', code: 0 };
+      return { message: 'Service already started', code: -1 };
     }
     if (!wcferryInstance) {
       return { message: 'Service not started', code: 0 };
@@ -54,8 +54,8 @@ export async function startServer(wcf: Wcferry, wcf_port: number) {
   const start = async () => {
     try {
       wcf.start();
-      await server.listen({ port: 3000, host: '0.0.0.0' });
-      console.log(chalk.green('Server started on port 3000'));
+      await server.listen({ port: 8001, host: '0.0.0.0' });
+      console.log(chalk.green('Server started on port 8001'));
     } catch (err) {
       server.log.error(err);
       process.exit(1);
