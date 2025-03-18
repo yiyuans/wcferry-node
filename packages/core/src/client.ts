@@ -66,7 +66,7 @@ export class Wcferry {
       service: options?.service || false,
       wcf_path: options?.wcf_path || path.join(__dirname, '../wcf-sdk/sdk.dll'),
       debug: options?.debug || false,
-      sigint: options?.sigint || false,
+      sigint: options?.sigint || true,
       wechat_dir: options?.wechat_dir || path.win32.join(os.homedir(), 'Documents', 'WeChat Files'),
     };
 
@@ -90,9 +90,9 @@ export class Wcferry {
 
   private trapOnExit() {
     process.on('exit', () => this.stop());
-    if (this.options.sigint) {
-      process.on('SIGINT', () => process.exit());
-    }
+    process.on('SIGINT', () => {
+      process.exit(0);
+    });
   }
 
   get connected() {
@@ -185,12 +185,13 @@ export class Wcferry {
   }
 
   stop() {
-    logger('Closing conneciton...');
     if (!this?.is_stop) return;
+    logger('Closing conneciton...');
     this.is_stop = true;
     this?.disableMsgReceiving?.();
     this?.socket?.close();
     if (!this?.options.service) {
+      console.log('关闭sdk');
       this.stopWcf();
     }
   }
