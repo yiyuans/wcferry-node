@@ -67,8 +67,8 @@ importers:
   packages/core:
     dependencies:
       '@zippybee/nng':
-        specifier: ^1.1.16
-        version: 1.1.16
+        specifier: ^1.1.18
+        version: 1.1.18
       debug:
         specifier: ^4.3.7
         version: 4.3.7
@@ -374,6 +374,9 @@ packages:
 
   '@zippybee/nng@1.1.16':
     resolution: {integrity: sha512-D0Q0DmbO3cTW7CdoF4XJvfG7tWClNXb5ZDv9r9ri2b1OQGOr5QP65Qc1w82H0j4T9NSmW3+hR7h30utmrC++Yw==}
+
+  '@zippybee/nng@1.1.18':
+    resolution: {integrity: sha512-QLIivNCiRQuGkGWNd1h8Ru9FHJcWQX4RR5S1ErFQjemjS02hG0NaYjQJgNwzZvGSRfUwztFnSglB/g85drwpWg==}
 
   abbrev@1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
@@ -1336,6 +1339,8 @@ snapshots:
   '@types/resolve@1.20.2': {}
 
   '@zippybee/nng@1.1.16': {}
+
+  '@zippybee/nng@1.1.18': {}
 
   abbrev@1.1.1: {}
 
