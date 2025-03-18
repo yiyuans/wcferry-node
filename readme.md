@@ -53,6 +53,14 @@ const off = client.listening((msg) => {
 >
 > wechat_dir 路径规范按照 linux / 填写 无需按照 win \ 书写 （文件管理目录详见微信客户端）
 
+## 支持与赞赏
+
+如果本项目对您有所帮助，欢迎扫码赞赏支持！
+
+<p align="center">
+  <img src="./qrcode/qrcode.jpg" alt="赞赏码" width="200">
+</p>
+
 # Zippy-WCF Service 模式（远程调用可用）
 
 ## 说明
@@ -631,6 +639,6 @@ export interface WcferryOptions {
 
 本项目借鉴了 并复制相关代码 特别感谢 [stkevintan](https://github.com/stkevintan) 的付出
 
-特别感谢 [查克](https://github.com/lich0821) 的付出 提供核心 SDK 支持
+特别感谢 [查克大佬](https://github.com/lich0821) 的付出 提供核心 SDK 支持
 
 [node-wcferry]: https://github.com/wechatferry/wechatferry
