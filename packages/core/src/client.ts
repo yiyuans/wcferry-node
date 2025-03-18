@@ -30,9 +30,6 @@ export interface WcferryOptions {
   wcf_path?: string;
   // debug模式
   debug?: boolean;
-
-  // sign
-  sigint?: boolean; //是否监听ctrl+c 事件
   // 微信文件目录
   wechat_dir?: string; // 默认为C:/Users/Administrator/Documents/WeChat Files   填写微信文件管理目录
 }
@@ -66,7 +63,6 @@ export class Wcferry {
       service: options?.service || false,
       wcf_path: options?.wcf_path || path.join(__dirname, '../wcf-sdk/sdk.dll'),
       debug: options?.debug || false,
-      sigint: options?.sigint || true,
       wechat_dir: options?.wechat_dir || path.win32.join(os.homedir(), 'Documents', 'WeChat Files'),
     };
 

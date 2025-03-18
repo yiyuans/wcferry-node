@@ -28,4 +28,12 @@ program
     console.log(chalk.green(`WCF is Running on port: ${options.port || 10086}`));
   });
 
+program
+  .command('stop')
+  .description('stop of wcf')
+  .action(() => {
+    wcferryInstance = new Wcferry();
+    wcferryInstance.stopWcf();
+  });
+
 program.parse(process.argv);

@@ -47,7 +47,6 @@ const off = client.listening((msg) => {
 | recvPyq (是否结束朋友圈消息)                                                  | `false`  | false                                         | `bool`   |
 | service (启动模式为 service 模式，此模式仅做注入 dll 使用 其他业务需自行实现) | `false`  | false                                         | `bool`   |
 | wcf_path (指定 wcf 工作目录 一般用于 docker 挂载目录使用)                     | `false`  | `path.join(__dirname, '../wcf-sdk/sdk.dll')`  | `string` |
-| sigint(是否监听终端 ctrl+c 终端信号)                                          | `false`  | `false`                                       | `bool`   |
 | wechat_dir(微信文件管理目录)                                                  | `false`  | C:/Users/Administrator/Documents/WeChat Files | `string` |
 
 > [!CAUTION]
