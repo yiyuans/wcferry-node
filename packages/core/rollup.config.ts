@@ -20,14 +20,24 @@ const external = Object.keys(pkg.dependencies || {});
 export default [
   {
     input: commpireTs, // 输入文件路径
-    output: {
-      dir: 'dist', // 输出文件路径
-      format: 'cjs', // 输出模块格式为 commonjs 规范
-      preserveModules: true, // 保留模块路径信息
-      entryFileNames: '[name].js', // 输出文件名格式
-      chunkFileNames: '[name]-[hash].js',
-      sourcemap: false,
-    },
+    output: [
+      {
+        dir: 'dist', // 输出文件路径
+        format: 'cjs', // 输出模块格式为 commonjs 规范
+        preserveModules: true, // 保留模块路径信息
+        entryFileNames: '[name].js', // 输出文件名格式
+        chunkFileNames: '[name]-[hash].js',
+        sourcemap: false,
+      },
+      {
+        dir: 'dist', // 输出文件路径
+        format: 'esm', //
+        preserveModules: true, // 保留模块路径信息
+        entryFileNames: '[name].mjs', // 输出文件名格式
+        chunkFileNames: '[name]-[hash].mjs',
+        sourcemap: false,
+      },
+    ],
     plugins: [
       cleandir('dist'), // 清空输出目录
       resolve(),
