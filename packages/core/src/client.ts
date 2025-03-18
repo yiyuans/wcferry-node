@@ -185,13 +185,12 @@ export class Wcferry {
   }
 
   stop() {
-    if (!this?.is_stop) return;
+    if (this?.is_stop) return;
     logger('Closing conneciton...');
     this.is_stop = true;
     this?.disableMsgReceiving?.();
     this?.socket?.close();
     if (!this?.options.service) {
-      console.log('关闭sdk');
       this.stopWcf();
     }
   }
