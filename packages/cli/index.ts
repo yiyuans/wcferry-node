@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
+import { startServer } from './service';
 import { Command } from 'commander';
 import { KillPort, PortIsRun, openWeChat } from './tool';
 import * as pkg from './package.json';
@@ -15,7 +16,8 @@ program
   .option('-p, --port <port>', 'set WCF SERVER PORT, default is 10086', '10086')
   .option('-d, --dir <dir>', 'WCF DLL PATH', '')
   .option('-w, --wechat_dir <wechat_dir>', 'set the WeChat directory', '')
-  .action((options) => {
+  .option('-f, --fontend <fontend>', 'Is the program running in the foreground')
+  .action(async (options) => {
     if (PortIsRun(+options.port || 10086)) {
       console.log(chalk.yellow('WCF service is already running.'));
       return;
@@ -28,6 +30,10 @@ program
       wechat_dir: options.wechat_dir || '',
     });
     fs.writeFileSync(path.join(__dirname, 'wcferry.json'), JSON.stringify({ port: +options.port || 10086 }));
+    if (options.fontend) {
+      await startServer(wcferryInstance, +options.port || 10086);
+      return;
+    }
     wcferryInstance.start();
     console.log(chalk.green(`WCF is Running on port: ${options.port || 10086}`));
   });
