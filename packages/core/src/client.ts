@@ -167,10 +167,10 @@ export class Wcferry {
       if (this.isRunSdk()) {
         this.startService();
       }
+      this.trapOnExit();
       if (this.options.service) return;
       this.socket.connect(this.createUrl());
       console.log('\x1b[37m\x1b[42m%s\x1b[0m', `WCF-SDK:${wcfInfo.version}`);
-      this.trapOnExit();
       if (this.msgListenerCount > 0) {
         this.enableMsgReceiving();
       }
@@ -186,7 +186,7 @@ export class Wcferry {
     this.is_stop = true;
     this?.disableMsgReceiving?.();
     this?.socket?.close();
-    if (!this?.options.service) {
+    if (!this.options.host) {
       this.stopWcf();
     }
   }

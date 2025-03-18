@@ -1,6 +1,6 @@
 import Fastify, { FastifyInstance } from 'fastify';
 import chalk from 'chalk';
-import { PortIsRun } from './tool';
+import { PortIsRun, KillPort } from './tool';
 import { Wcferry } from '@zippybee/wechatcore';
 
 let wcferryInstance: Wcferry | null = null;
@@ -8,7 +8,7 @@ let wcf_port = 10086;
 let server: FastifyInstance;
 
 function createServer() {
-  const fastify = Fastify({ logger: true });
+  const fastify = Fastify();
 
   fastify.get('/start', async (request, reply) => {
     if (PortIsRun(wcf_port)) {
@@ -26,6 +26,12 @@ function createServer() {
       return { message: 'Service not started', code: 0 };
     }
     wcferryInstance.stop();
+    reply.send({ code: 3, message: 'Service stopping...' });
+  });
+
+  fastify.get('/force-stop', async (request, reply) => {
+    KillPort(wcf_port);
+    KillPort(wcf_port + 1);
     reply.send({ code: 3, message: 'Service stopping...' });
   });
 
@@ -64,6 +70,12 @@ export async function startServer(wcf: Wcferry, wcf_port: number) {
   process.on('unhandledRejection', (reason: unknown, promise: Promise<unknown>) => {
     console.error('Unhandled Rejection:', reason);
     restartServer();
+  });
+  process.on('SIGINT', async () => {
+    if (wcferryInstance) {
+      wcferryInstance.stop();
+    }
+    process.exit(0);
   });
 
   async function restartServer() {

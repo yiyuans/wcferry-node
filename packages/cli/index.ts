@@ -16,9 +16,9 @@ program
   .option('-p, --port <port>', 'set WCF SERVER PORT, default is 10086', '10086')
   .option('-d, --dir <dir>', 'WCF DLL PATH', '')
   .option('-w, --wechat_dir <wechat_dir>', 'set the WeChat directory', '')
-  .option('-f, --fontend <fontend>', 'Is the program running in the foreground')
+  .option('-f, --fontend', 'Is the program running in the foreground')
   .action(async (options) => {
-    if (PortIsRun(+options.port || 10086)) {
+    if (PortIsRun(+options.port || 10086) && !options.fontend) {
       console.log(chalk.yellow('WCF service is already running.'));
       return;
     }
