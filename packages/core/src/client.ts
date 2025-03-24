@@ -22,7 +22,7 @@ export interface WcferryOptions {
   socketOptions?: SocketOptions;
   /** the cache dir to hold temp files, defaults to `os.tmpdir()/wcferry`  */
   cacheDir?: string;
-  // 当使用wcferry.on(...)监听消息时，是否接受朋友圈消息
+  // 当使用wcferry.listening(...)监听消息时，是否接受朋友圈消息
   recvPyq?: boolean;
   // service 模式
   service?: boolean;
