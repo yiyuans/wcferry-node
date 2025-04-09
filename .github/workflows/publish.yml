@@ -35,8 +35,10 @@ jobs:
           echo "latest_release=${{ env.latest_release }}"
           echo "local_version=${{ env.local_version }}"
           if [ "${{ env.latest_release }}" != "${{ env.local_version }}" ]; then
+            echo "Versions are different, new version available."
             echo "new_version=true" >> $GITHUB_ENV
           else
+            echo "Versions are the same, no new version."
             echo "new_version=false" >> $GITHUB_ENV
 
       # 5. 如果没有新版本，退出并输出当前版本
@@ -96,7 +98,7 @@ jobs:
           git add .
           pnpm publish --access public --no-git-checks  # 禁用 git 检查，避免 "unclean" 错误
 
-      # 13. 发布 cli 包
+      # 13. 发布 CLI 包
       - name: CLI package build & publish
         if: env.new_version == 'true'
         run: |
