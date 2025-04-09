@@ -5,6 +5,9 @@ on:
     - cron: '0 * * * *' # 每小时执行一次
   workflow_dispatch: # 支持手动触发
 
+permissions:
+  contents: write # 允许写入代码库内容
+  id-token: write # 允许写入 ID 令牌
 jobs:
   check-and-publish:
     runs-on: ubuntu-latest
@@ -69,9 +72,7 @@ jobs:
       - name: Setup .npmrc for publish
         if: env.new_version == 'true'
         run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ./.npmrc
-          cat ./.npmrc  # 输出 .npmrc 文件内容进行调试
-          ls -l  # 输出当前目录文件列表进行调试
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >  ~/.npmrc
 
       # 10. 更新 version.json
       - name: Update version.json
