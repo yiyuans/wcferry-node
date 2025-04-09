@@ -73,6 +73,8 @@ jobs:
         if: env.new_version == 'true'
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >  ~/.npmrc
+          echo "@dr-forget:registry=https://npm.pkg.github.com/" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
 
       # 10. 更新 version.json
       - name: Update version.json
@@ -87,7 +89,7 @@ jobs:
           echo "Verifying NPM token..."
           npm whoami  # 验证 token 是否有效
 
-      # 12. 发布 core 包
+      # 12. 发布 core 包 到 NPM
       - name: Core package build & publish
         if: env.new_version == 'true'
         run: |
@@ -118,3 +120,10 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git commit -m "chore: update version to ${{ env.latest_release }}"  # 提交更新
           git push
+      # 15. 发布 GitHub package
+      - name: Publish GitHub package
+        if: env.new_version == 'true'
+        run: |
+          cd packages/core
+          pnpm publish --access restricted --registry=https://npm.pkg.github.com/ --no-git-checks
+          echo "GitHub package published successfully."
