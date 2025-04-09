@@ -54,11 +54,13 @@ jobs:
       # 6. 设置 Node.js 环境
       - name: Set up Node.js
         uses: actions/setup-node@v4
+        if: env.new_version == 'true'
         with:
           node-version: '22'
 
       # 7. 安装 pnpm
       - name: Install pnpm globally
+        if: env.new_version == 'true'
         run: |
           npm install -g pnpm@8
           pnpm --version  # 确认 pnpm 安装成功
@@ -97,7 +99,8 @@ jobs:
           pnpm run get-wcf
           pnpm run build-proto
           pnpm version patch
-          pnpm version patch
+
+          pnpm version patch 
           git add .
           pnpm publish --access public --no-git-checks  # 禁用 git 检查，避免 "unclean" 错误
 
