@@ -10,57 +10,84 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. 检出代码
       - name: Checkout your repo
         uses: actions/checkout@v4
 
+      # 2. 获取最新的上游发布版本
+      - name: Get latest upstream release
+        id: get_release
+        run: |
+          LATEST_TAG=$(curl -s https://api.github.com/repos/lich0821/WeChatFerry/releases/latest | jq -r .tag_name)
+          echo "latest_release=$LATEST_TAG" >> $GITHUB_ENV
+
+      # 3. 获取本地版本号
+      - name: Read local version
+        id: get_local_version
+        run: |
+          LOCAL_VERSION=$(jq -r .version packages/core/src/version.json)
+          echo "local_version=$LOCAL_VERSION" >> $GITHUB_ENV
+
+      # 4. 比较版本
+      - name: Compare versions
+        id: compare
+        run: |
+          echo "latest_release=${{ env.latest_release }}"
+          echo "local_version=${{ env.local_version }}"
+          if [ "${{ env.latest_release }}" != "${{ env.local_version }}" ]; then
+            echo "new_version=true" >> $GITHUB_ENV
+          else
+            echo "new_version=false" >> $GITHUB_ENV
+
+      # 5. 如果没有新版本，退出并输出当前版本
+      - name: Exit if no new version
+        if: env.new_version == 'false'
+        run: |
+          echo "No new version detected. Current version is ${{ env.local_version }}. Skipping publish."
+
+      # 6. 设置 Node.js 环境
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
 
+      # 7. 安装 pnpm
       - name: Install pnpm globally
         run: |
           npm install -g pnpm@8
           pnpm --version  # 确认 pnpm 安装成功
 
+      # 8. 安装依赖
       - name: Install dependencies
+        if: env.new_version == 'true'
         run: pnpm install
 
+      # 9. 设置 .npmrc 配置以便发布
       - name: Setup .npmrc for publish
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-
-      - name: Get latest upstream release
-        id: get_release
+        if: env.new_version == 'true'
         run: |
-          LATEST_TAG=$(curl -s https://api.github.com/repos/lich0821/WeChatFerry/releases/latest | jq -r .tag_name)
-          echo "latest_release=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          echo "NPM token has been set"
+          cat ~/.npmrc  # 输出 .npmrc 文件内容进行调试
+          echo "Checking .npmrc file path"
+          ls -l ~/.npmrc  # 输出 .npmrc 文件路径进行调试
 
-      - name: Read local version
-        id: get_local_version
-        run: |
-          LOCAL_VERSION=$(jq -r .version packages/core/src/version.json)
-          echo "local_version=$LOCAL_VERSION" >> $GITHUB_OUTPUT
-
-      - name: Compare versions
-        id: compare
-        run: |
-          if [ "${{ steps.get_release.outputs.latest_release }}" != "${{ steps.get_local_version.outputs.local_version }}" ]; then
-            echo "new_version=true" >> $GITHUB_OUTPUT
-          else
-            echo "new_version=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Exit if no new version
-        if: steps.compare.outputs.new_version == 'false'
-        run: echo "No new version detected. Skipping publish."
-
+      # 10. 更新 version.json
       - name: Update version.json
-        if: steps.compare.outputs.new_version == 'true'
+        if: env.new_version == 'true'
         run: |
-          jq --arg ver "${{ steps.get_release.outputs.latest_release }}" '.version = $ver' packages/core/src/version.json > tmp.json && mv tmp.json packages/core/src/version.json
+          jq --arg ver "${{ env.latest_release }}" '.version = $ver' packages/core/src/version.json > tmp.json && mv tmp.json packages/core/src/version.json
 
+      # 11. 验证 NPM token 是否有效
+      - name: Verify NPM token
+        if: env.new_version == 'true'
+        run: |
+          echo "Verifying NPM token..."
+          npm whoami  # 验证 token 是否有效
+
+      # 12. 发布 core 包
       - name: Core package build & publish
-        if: steps.compare.outputs.new_version == 'true'
+        if: env.new_version == 'true'
         run: |
           cd packages/core
           pnpm run get-wcf
@@ -69,8 +96,9 @@ jobs:
           git add .
           pnpm publish --access public --no-git-checks  # 禁用 git 检查，避免 "unclean" 错误
 
+      # 13. 发布 cli 包
       - name: CLI package build & publish
-        if: steps.compare.outputs.new_version == 'true'
+        if: env.new_version == 'true'
         run: |
           cd packages/cli
           pnpm version patch
@@ -78,16 +106,18 @@ jobs:
           pnpm run build
           pnpm publish --access public --no-git-checks  # 禁用 git 检查，避免 "unclean" 错误
 
+      # 14. 提交并推送更新
       - name: Commit and push changes
-        if: steps.compare.outputs.new_version == 'true'
+        if: env.new_version == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore: update version to ${{ steps.get_release.outputs.latest_release }}"  # 提交更新
+          git commit -m "chore: update version to ${{ env.latest_release }}"  # 提交更新
           git push
 
+      # 15. 为提交打标签
       - name: Tag the commit with release version
-        if: steps.compare.outputs.new_version == 'true'
+        if: env.new_version == 'true'
         run: |
-          git tag ${{ steps.get_release.outputs.latest_release }}  # 为提交添加 release 版本标签
-          git push origin ${{ steps.get_release.outputs.latest_release }}  # 推送标签到远程
+          git tag ${{ env.latest_release }}  # 为提交添加 release 版本标签
+          git push origin ${{ env.latest_release }}  # 推送标签到远程
