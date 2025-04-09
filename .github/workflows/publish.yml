@@ -69,11 +69,9 @@ jobs:
       - name: Setup .npmrc for publish
         if: env.new_version == 'true'
         run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-          echo "NPM token has been set"
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ./ .npmrc
           cat ~/.npmrc  # 输出 .npmrc 文件内容进行调试
-          echo "Checking .npmrc file path"
-          ls -l ~/.npmrc  # 输出 .npmrc 文件路径进行调试
+          ls -l  # 输出当前目录文件列表进行调试
 
       # 10. 更新 version.json
       - name: Update version.json
