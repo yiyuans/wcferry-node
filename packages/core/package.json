@@ -34,7 +34,7 @@
     "@types/mime": "3",
     "adm-zip": "^0.5.16",
     "axios": "^1.7.7",
-    "grpc-tools": "^1.12.4",
+    "grpc-tools": "^1.13.0",
     "protoc-gen-ts": "^0.8.7"
   },
   "bugs": {
