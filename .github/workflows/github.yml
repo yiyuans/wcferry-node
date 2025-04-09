@@ -38,9 +38,9 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.package_version }}
-          name: Release v${{ env.package_version }}
+          name: v${{ env.package_version }}
           body: |
-            - Action自动发布banben v${{ env.package_version }}
+            - Action自动发布版本 v${{ env.package_version }}
           files: |
             packages/core/dist/*.tgz
             packages/cli/dist/*.tgz

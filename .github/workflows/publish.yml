@@ -143,15 +143,25 @@ jobs:
           PACKAGE_VERSION=$(jq -r .version packages/core/package.json)
           echo "package_version=$PACKAGE_VERSION" >> $GITHUB_ENV
 
-      # 17. 发布 Release
+      # 17. 为提交打标签
+      - name: Tag the commit with release version
+        if: env.new_version == 'true'
+        run: |
+          git tag ${{ env.package_version }}  # 为提交添加 release 版本标签
+          git push origin ${{ env.package_version }}  # 推送标签到远程
+
+      # 18. 发布 Release
       - name: Publish Release
+        if: env.new_version == 'true'
         id: publish_release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.package_version }}
           name: Release v${{ env.package_version }}
           body: |
-            - Action自动发布banben v${{ env.package_version }}
+            - 🔄 Action自动发布版本 v${{ env.package_version }}
+            - 📦 发布了 @dr-forget/wechatcore 到 GitHub Packages
+            - WCF 版本号: ${{ env.latest_release }}
           files: |
             packages/core/dist/*.tgz
             packages/cli/dist/*.tgz
