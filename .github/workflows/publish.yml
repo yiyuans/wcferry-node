@@ -67,7 +67,7 @@ jobs:
           pnpm run build-proto
           pnpm version patch
           git add .
-          pnpm publish --access public
+          pnpm publish --access public --no-git-checks  # 禁用 git 检查，避免 "unclean" 错误
 
       - name: CLI package build & publish
         if: steps.compare.outputs.new_version == 'true'
@@ -76,12 +76,18 @@ jobs:
           pnpm version patch
           git add .
           pnpm run build
-          pnpm publish --access public
+          pnpm publish --access public --no-git-checks  # 禁用 git 检查，避免 "unclean" 错误
 
       - name: Commit and push changes
         if: steps.compare.outputs.new_version == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore: update version to ${{ steps.get_release.outputs.latest_release }}"
+          git commit -m "chore: update version to ${{ steps.get_release.outputs.latest_release }}"  # 提交更新
           git push
+
+      - name: Tag the commit with release version
+        if: steps.compare.outputs.new_version == 'true'
+        run: |
+          git tag ${{ steps.get_release.outputs.latest_release }}  # 为提交添加 release 版本标签
+          git push origin ${{ steps.get_release.outputs.latest_release }}  # 推送标签到远程
