@@ -25,16 +25,22 @@ jobs:
           VERSION=$(jq -r .version packages/core/src/version.json)
           echo "version=$VERSION" >> $GITHUB_ENV
           echo "version=${{ env.version }}"
+      # 16.获取package.json 版本号
+      - name: Read package version
+        id: package_version
+        run: |
+          PACKAGE_VERSION=$(jq -r .version packages/core/package.json)
+          echo "package_version=$PACKAGE_VERSION" >> $GITHUB_ENV
 
         # 2.发布release
       - name: Publish Release
         id: publish_release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ env.version }}
-          name: Release v${{ env.version }}
+          tag_name: v${{ env.package_version }}
+          name: Release v${{ env.package_version }}
           body: |
-            - Action自动发布banben v${{ env.version }}
+            - Action自动发布banben v${{ env.package_version }}
           files: |
             packages/core/dist/*.tgz
             packages/cli/dist/*.tgz

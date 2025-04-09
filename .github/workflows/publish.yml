@@ -75,8 +75,6 @@ jobs:
         if: env.new_version == 'true'
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >  ~/.npmrc
-          echo "@dr-forget:registry=https://npm.pkg.github.com/" >> ~/.npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
 
       # 10. 更新 version.json
       - name: Update version.json
@@ -99,7 +97,6 @@ jobs:
           pnpm run get-wcf
           pnpm run build-proto
           pnpm version patch
-
           pnpm version patch 
           git add .
           pnpm publish --access public --no-git-checks  # 禁用 git 检查，避免 "unclean" 错误
@@ -115,7 +112,22 @@ jobs:
           pnpm run build
           pnpm publish --access public --no-git-checks  # 禁用 git 检查，避免 "unclean" 错误
 
-      # 14. 提交并推送更新
+      # 14. 发布 GitHub package
+      - name: Publish GitHub package
+        if: env.new_version == 'true'
+        run: |
+          # 复制原始包名为临时目录用于修改作用域
+          cp packages/core/package.json packages/core/package.json.bak
+          # 修改作用域为 @dr-forget
+          jq '.name = "@dr-forget/wechatcore"' packages/core/package.json > tmp && mv tmp packages/core/package.json
+          # 创建 .npmrc 用于 GitHub Packages 发布
+          echo "@dr-forget:registry=https://npm.pkg.github.com/" > ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc 
+          cd packages/core
+          pnpm publish --access restricted --registry=https://npm.pkg.github.com/ --no-git-checks
+          echo "GitHub package published successfully."
+
+        # 15. 提交并推送更新
       - name: Commit and push changes
         if: env.new_version == 'true'
         run: |
@@ -123,10 +135,23 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git commit -m "chore: update version to ${{ env.latest_release }}"  # 提交更新
           git push
-      # 15. 发布 GitHub package
-      - name: Publish GitHub package
-        if: env.new_version == 'true'
+
+        # 16.获取package.json 版本号
+      - name: Read package version
+        id: package_version
         run: |
-          cd packages/core
-          pnpm publish --access restricted --registry=https://npm.pkg.github.com/ --no-git-checks
-          echo "GitHub package published successfully."
+          PACKAGE_VERSION=$(jq -r .version packages/core/package.json)
+          echo "package_version=$PACKAGE_VERSION" >> $GITHUB_ENV
+
+      # 17. 发布 Release
+      - name: Publish Release
+        id: publish_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.package_version }}
+          name: Release v${{ env.package_version }}
+          body: |
+            - Action自动发布banben v${{ env.package_version }}
+          files: |
+            packages/core/dist/*.tgz
+            packages/cli/dist/*.tgz
