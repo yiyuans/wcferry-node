@@ -1,88 +1,101 @@
-name: Check Upstream Release and Publish
+name: Check WeChatFerry Release
 
 on:
   schedule:
-    - cron: '0 * * * *' # 每小时执行一次
-  workflow_dispatch: # 支持手动触发
+    - cron: '0 */6 * * *' # 每6小时检查一次
+  workflow_dispatch:
 
 jobs:
   check-and-publish:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout your repo
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '20'
           cache: 'pnpm'
 
-      - name: Install pnpm globally
-        run: |
-          npm install -g pnpm@8
-          pnpm --version  # 确认 pnpm 安装成功
-
       - name: Install dependencies
-        run: pnpm install
-
-      - name: Setup .npmrc for publish
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-
-      - name: Get latest upstream release
-        id: get_release
         run: |
-          LATEST_TAG=$(curl -s https://api.github.com/repos/lich0821/WeChatFerry/releases/latest | jq -r .tag_name)
-          echo "latest_release=$LATEST_TAG" >> $GITHUB_OUTPUT
+          npm install -g pnpm jq
+          pnpm install
 
-      - name: Read local version
-        id: get_local_version
+      - name: Get WeChatFerry latest release
+        id: get_wcf_release
         run: |
-          LOCAL_VERSION=$(jq -r .version packages/core/src/version.json)
-          echo "local_version=$LOCAL_VERSION" >> $GITHUB_OUTPUT
+          LATEST_TAG=$(curl -s https://api.github.com/repos/lich0821/WeChatFerry/releases/latest | jq -r '.tag_name')
+          echo "wcf_version=${LATEST_TAG}" >> $GITHUB_OUTPUT
+
+      - name: Get current version
+        id: get_current_version
+        run: |
+          CURRENT_VERSION=$(jq -r '.version' packages/core/src/version.json)
+          echo "current_version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Compare versions
-        id: compare
+        id: version_check
         run: |
-          if [ "${{ steps.get_release.outputs.latest_release }}" != "${{ steps.get_local_version.outputs.local_version }}" ]; then
-            echo "new_version=true" >> $GITHUB_OUTPUT
-          else
-            echo "new_version=false" >> $GITHUB_OUTPUT
-          fi
+          wcf_ver=${1#v}
+          current_ver=${2#v}
 
-      - name: Exit if no new version
-        if: steps.compare.outputs.new_version == 'false'
-        run: echo "No new version detected. Skipping publish."
+          IFS='.' read -ra wcf <<< "$wcf_ver"
+          IFS='.' read -ra curr <<< "$current_ver"
 
-      - name: Update version.json
-        if: steps.compare.outputs.new_version == 'true'
+          newer=false
+          for ((i=0; i<${#wcf[@]}; i++)); do
+            if [[ -z "${curr[$i]}" ]]; then curr[$i]=0; fi
+            if (( ${wcf[$i]} > ${curr[$i]} )); then
+              newer=true
+              break
+            elif (( ${wcf[$i]} < ${curr[$i]} )); then
+              break
+            fi
+          done
+
+          echo "should_publish=$newer" >> $GITHUB_OUTPUT
+        env:
+          arg1: ${{ steps.get_wcf_release.outputs.wcf_version }}
+          arg2: ${{ steps.get_current_version.outputs.current_version }}
+
+      - name: Publish Packages
+        if: steps.version_check.outputs.should_publish == 'true'
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          jq --arg ver "${{ steps.get_release.outputs.latest_release }}" '.version = $ver' packages/core/src/version.json > tmp.json && mv tmp.json packages/core/src/version.json
+          # Configure git
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
 
-      - name: Core package build & publish
-        if: steps.compare.outputs.new_version == 'true'
-        run: |
+          # Configure npm
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+
+          # Process core package
           cd packages/core
           pnpm run get-wcf
           pnpm run build-proto
-          pnpm version patch
-          git add .
+          pnpm version patch --no-git-tag-version
           pnpm publish --access public
+          cd ../..
 
-      - name: CLI package build & publish
-        if: steps.compare.outputs.new_version == 'true'
-        run: |
+          # Process cli package
           cd packages/cli
-          pnpm version patch
-          git add .
+          pnpm version patch --no-git-tag-version
           pnpm run build
           pnpm publish --access public
+          cd ../..
 
-      - name: Commit and push changes
-        if: steps.compare.outputs.new_version == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore: update version to ${{ steps.get_release.outputs.latest_release }}"
-          git push
+          # Commit and push changes
+          git add .
+          git commit -m "chore: release new versions (core: $(jq -r .version packages/core/package.json), cli: $(jq -r .version packages/cli/package.json))"
+          git push origin main
+
+          # Create tag and push
+          CORE_VERSION=$(jq -r .version packages/core/package.json)
+          git tag "core@$CORE_VERSION"
+          git push origin "core@$CORE_VERSION"
