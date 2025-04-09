@@ -37,11 +37,16 @@ jobs:
       # 5. 设置 .npmrc 配置（GitHub Packages）
       - name: Setup .npmrc for GitHub Packages
         run: |
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
-          echo "@dr-forget:registry=https://npm.pkg.github.com/" >> ~/.npmrc
+          cp packages/core/package.json packages/core/package.json.bak
+          # 修改作用域为 @dr-forget
+          jq '.name = "@dr-forget/wechatcore"' packages/core/package.json > tmp && mv tmp packages/core/package.json
+
+          echo "@dr-forget:registry=https://npm.pkg.github.com/" > ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
 
       # 7. 发布到 GitHub Packages
       - name: Publish core package to GitHub Packages
         run: |
           cd packages/core
           pnpm publish --access restricted --registry=https://npm.pkg.github.com/ --no-git-checks  # 发布到 GPR
+          mv package.json.bak package.json
