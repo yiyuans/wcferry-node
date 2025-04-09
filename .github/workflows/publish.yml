@@ -40,6 +40,7 @@ jobs:
           else
             echo "Versions are the same, no new version."
             echo "new_version=false" >> $GITHUB_ENV
+          fi
 
       # 5. 如果没有新版本，退出并输出当前版本
       - name: Exit if no new version
