@@ -118,10 +118,3 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git commit -m "chore: update version to ${{ env.latest_release }}"  # 提交更新
           git push
-
-      # 15. 为提交打标签
-      - name: Tag the commit with release version
-        if: env.new_version == 'true'
-        run: |
-          git tag ${{ env.latest_release }}  # 为提交添加 release 版本标签
-          git push origin ${{ env.latest_release }}  # 推送标签到远程
