@@ -1,0 +1,40 @@
+# GitHub Actions 发布到 GitHub Packages
+name: Publish to GitHub Packages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write # 如果需要更新代码
+  packages: write # 必须的权限来发布包
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 检出代码
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # 获取版本号
+      - name: Get version
+        id: get_version
+        run: |
+          # 获取版本号
+          VERSION=$(jq -r .version packages/core/src/version.json)
+          echo "version=$VERSION" >> $GITHUB_ENV
+          echo "version=${{ env.version }}"
+
+        # 2.发布release
+      - name: Publish Release
+        id: publish_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.version }}
+          name: Release v${{ env.version }}
+          body: |
+            - Action自动发布banben v${{ env.version }}
+          files: |
+            packages/core/dist/*.tgz
+            packages/cli/dist/*.tgz

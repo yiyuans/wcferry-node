@@ -43,5 +43,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dr-forget/wcferry-node/tree/main/packages/core"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
