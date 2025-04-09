@@ -95,6 +95,7 @@ jobs:
           pnpm run get-wcf
           pnpm run build-proto
           pnpm version patch
+          pnpm version patch
           git add .
           pnpm publish --access public --no-git-checks  # 禁用 git 检查，避免 "unclean" 错误
 
@@ -103,6 +104,7 @@ jobs:
         if: env.new_version == 'true'
         run: |
           cd packages/cli
+          pnpm version patch
           pnpm version patch
           git add .
           pnpm run build
