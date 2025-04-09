@@ -19,11 +19,10 @@ jobs:
           node-version: '22'
           cache: 'pnpm'
 
-      - name: Enable corepack and install pnpm
+      - name: Install pnpm globally
         run: |
-          corepack enable
-          corepack prepare pnpm@8 --activate
-          pnpm --version  # ✅ 验证 pnpm 可用
+          npm install -g pnpm@8
+          pnpm --version  # 确认 pnpm 安装成功
 
       - name: Install dependencies
         run: pnpm install
