@@ -116,6 +116,8 @@ jobs:
       - name: Publish GitHub package
         if: env.new_version == 'true'
         run: |
+          #清空缓存
+          rm -f ~/.npmrc
           # 复制原始包名为临时目录用于修改作用域
           cp packages/core/package.json packages/core/package.json.bak
           # 修改作用域为 @dr-forget
