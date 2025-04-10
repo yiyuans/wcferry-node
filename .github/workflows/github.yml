@@ -104,10 +104,10 @@ jobs:
           echo "@dr-forget:registry=https://npm.pkg.github.com/" > ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc 
           cd packages/core
+          pnpm version patch
+          pnpm version patch
           pnpm publish --access restricted --registry=https://npm.pkg.github.com/ --no-git-checks
           echo "GitHub package published successfully."
-          npm whoami # 验证 token 是否有效
-
         # 15. 提交并推送更新
       - name: Commit and push changes
         if: env.new_version == 'true'
