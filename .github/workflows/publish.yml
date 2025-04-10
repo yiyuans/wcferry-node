@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write # 允许写入代码库内容
+  packages: write # 允许写入包
   id-token: write # 允许写入 ID 令牌
 jobs:
   check-and-publish:
