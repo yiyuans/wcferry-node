@@ -119,8 +119,6 @@ jobs:
         run: |
           #清空缓存
           rm -f ~/.npmrc
-          # 复制原始包名为临时目录用于修改作用域
-          cp packages/core/package.json packages/core/package.json.bak
           # 修改作用域为 @dr-forget
           jq '.name = "@dr-forget/wechatcore"' packages/core/package.json > tmp && mv tmp packages/core/package.json
           # 创建 .npmrc 用于 GitHub Packages 发布
@@ -129,14 +127,18 @@ jobs:
           cd packages/core
           pnpm publish --access restricted --registry=https://npm.pkg.github.com/ --no-git-checks
           echo "GitHub package published successfully."
-          npm whoami # 验证 token 是否有效
+          # 返回根目录（更安全）
+          cd ../..
+          # 恢复原始包名
+          jq '.name = "@zippybee/wechatcore"' packages/core/package.json > tmp && mv tmp packages/core/package.json
 
         # 15. 提交并推送更新
       - name: Commit and push changes
         if: env.new_version == 'true'
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.email "github-actions[bot]@users.noreply.github.com"]
+          git add .
           git commit -m "chore: update version to ${{ env.latest_release }}"  # 提交更新
           git push
 
@@ -161,7 +163,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.package_version }}
-          name: Release v${{ env.package_version }}
+          name: v${{ env.package_version }}
           body: |
             - 🔄 Action自动发布版本 v${{ env.package_version }}
             - 📦 发布了 @dr-forget/wechatcore 到 GitHub Packages

@@ -108,6 +108,10 @@ jobs:
           pnpm version patch
           # pnpm publish --access restricted --registry=https://npm.pkg.github.com/ --no-git-checks
           echo "GitHub package published successfully."
+           # 返回根目录（更安全）
+          cd ../..
+          # 恢复原始包名
+          jq '.name = "@zippybee/wechatcore"' packages/core/package.json > tmp && mv tmp packages/core/package.json
         # 15. 提交并推送更新
       - name: Commit and push changes
         if: env.new_version == 'true'
@@ -139,7 +143,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.package_version }}
-          name: Release v${{ env.package_version }}
+          name: v${{ env.package_version }}
           body: |
             - 🔄 Action自动发布版本 v${{ env.package_version }}
             - 📦 发布了 @dr-forget/wechatcore 到 GitHub Packages
