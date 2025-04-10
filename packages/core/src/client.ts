@@ -181,12 +181,14 @@ export class Wcferry {
   }
 
   stop() {
+    if (this.options.service) return;
     if (this?.is_stop) return;
     logger('Closing conneciton...');
     this.is_stop = true;
     this?.disableMsgReceiving?.();
     this?.socket?.close();
-    if (!this.options.host) {
+    const isRun = this.isRunSdk();
+    if (isRun) {
       this.stopWcf();
     }
   }

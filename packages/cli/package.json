@@ -1,6 +1,6 @@
 {
   "name": "@zippybee/wcf-cli",
-  "version": "1.0.38",
+  "version": "1.0.40",
   "description": "",
   "bin": {
     "zippy-wcf": "./dist/index.js"
