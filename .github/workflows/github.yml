@@ -1,46 +1,147 @@
-# GitHub Actions 发布到 GitHub Packages
-name: Publish to GitHub Packages
+name: Check Upstream Release and Publish
 
 on:
-  workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *' # 每小时执行一次
+  workflow_dispatch: # 支持手动触发
 
 permissions:
-  contents: write # 如果需要更新代码
-  packages: write # 必须的权限来发布包
-  id-token: write
-
+  contents: write # 允许写入代码库内容
+  id-token: write # 允许写入 ID 令牌
 jobs:
-  publish:
+  check-and-publish:
     runs-on: ubuntu-latest
 
     steps:
       # 1. 检出代码
-      - name: Checkout repository
+      - name: Checkout your repo
         uses: actions/checkout@v4
-      # 获取版本号
-      - name: Get version
-        id: get_version
+
+      # 2. 获取最新的上游发布版本
+      - name: Get latest upstream release
+        id: get_release
         run: |
-          # 获取版本号
-          VERSION=$(jq -r .version packages/core/src/version.json)
-          echo "version=$VERSION" >> $GITHUB_ENV
-          echo "version=${{ env.version }}"
-      # 16.获取package.json 版本号
+          LATEST_TAG=$(curl -s https://api.github.com/repos/lich0821/WeChatFerry/releases/latest | jq -r .tag_name)
+          echo "latest_release=$LATEST_TAG" >> $GITHUB_ENV
+
+      # 3. 获取本地版本号
+      - name: Read local version
+        id: get_local_version
+        run: |
+          LOCAL_VERSION=$(jq -r .version packages/core/src/version.json)
+          echo "local_version=$LOCAL_VERSION" >> $GITHUB_ENV
+
+      # 4. 比较版本
+      - name: Compare versions
+        id: compare
+        run: |
+          echo "latest_release=${{ env.latest_release }}"
+          echo "local_version=${{ env.local_version }}"
+          if [ "${{ env.latest_release }}" != "${{ env.local_version }}" ]; then
+            echo "Versions are different, new version available."
+            echo "new_version=true" >> $GITHUB_ENV
+          else
+            echo "Versions are the same, no new version."
+            echo "new_version=false" >> $GITHUB_ENV
+          fi
+
+      # 5. 如果没有新版本，退出并输出当前版本
+      - name: Exit if no new version
+        if: env.new_version == 'false'
+        run: |
+          echo "No new version detected. Current version is ${{ env.local_version }}. Skipping publish."
+
+      # 6. 设置 Node.js 环境
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        if: env.new_version == 'true'
+        with:
+          node-version: '22'
+
+      # 7. 安装 pnpm
+      - name: Install pnpm globally
+        if: env.new_version == 'true'
+        run: |
+          npm install -g pnpm@8
+          pnpm --version  # 确认 pnpm 安装成功
+
+      # 8. 安装依赖
+      - name: Install dependencies
+        if: env.new_version == 'true'
+        run: pnpm install
+
+      # 9. 设置 .npmrc 配置以便发布
+      - name: Setup .npmrc for publish
+        if: env.new_version == 'true'
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >  ~/.npmrc
+
+      # 10. 更新 version.json
+      - name: Update version.json
+        if: env.new_version == 'true'
+        run: |
+          jq --arg ver "${{ env.latest_release }}" '.version = $ver' packages/core/src/version.json > tmp.json && mv tmp.json packages/core/src/version.json
+
+      # 11. 验证 NPM token 是否有效
+      - name: Verify NPM token
+        if: env.new_version == 'true'
+        run: |
+          echo "Verifying NPM token..."
+          npm whoami  # 验证 token 是否有效
+
+      # 14. 发布 GitHub package
+      - name: Publish GitHub package
+        if: env.new_version == 'true'
+        run: |
+          #清空缓存
+          rm -f ~/.npmrc
+          # 复制原始包名为临时目录用于修改作用域
+          cp packages/core/package.json packages/core/package.json.bak
+          # 修改作用域为 @dr-forget
+          jq '.name = "@dr-forget/wechatcore"' packages/core/package.json > tmp && mv tmp packages/core/package.json
+          # 创建 .npmrc 用于 GitHub Packages 发布
+          echo "@dr-forget:registry=https://npm.pkg.github.com/" > ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc 
+          cd packages/core
+          pnpm publish --access restricted --registry=https://npm.pkg.github.com/ --no-git-checks
+          echo "GitHub package published successfully."
+          npm whoami # 验证 token 是否有效
+
+        # 15. 提交并推送更新
+      - name: Commit and push changes
+        if: env.new_version == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: update version to ${{ env.latest_release }}"  # 提交更新
+          git push
+
+        # 16.获取package.json 版本号
       - name: Read package version
         id: package_version
         run: |
           PACKAGE_VERSION=$(jq -r .version packages/core/package.json)
           echo "package_version=$PACKAGE_VERSION" >> $GITHUB_ENV
 
-        # 2.发布release
+      # 17. 为提交打标签
+      - name: Tag the commit with release version
+        if: env.new_version == 'true'
+        run: |
+          git tag ${{ env.package_version }}  # 为提交添加 release 版本标签
+          git push origin ${{ env.package_version }}  # 推送标签到远程
+
+      # 18. 发布 Release
       - name: Publish Release
+        if: env.new_version == 'true'
         id: publish_release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.package_version }}
-          name: v${{ env.package_version }}
+          name: Release v${{ env.package_version }}
           body: |
-            - Action自动发布版本 v${{ env.package_version }}
+            - 🔄 Action自动发布版本 v${{ env.package_version }}
+            - 📦 发布了 @dr-forget/wechatcore 到 GitHub Packages
+            - WCF 版本号: ${{ env.latest_release }}
           files: |
             packages/core/dist/*.tgz
             packages/cli/dist/*.tgz
