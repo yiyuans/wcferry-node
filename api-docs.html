@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeChatCore API 文档</title>
+    <style>
+        :root {
+            --primary-color: #1890ff;
+            --border-color: #e8e8e8;
+            --text-color: #333;
+            --code-bg: #f5f5f5;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            padding: 20px;
+            background: #fff;
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+        }
+        main {
+            margin-left: 270px;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            margin: 1.5em 0 0.5em;
+            color: #1a1a1a;
+        }
+        h1 { font-size: 2em; }
+        h2 { font-size: 1.5em; }
+        h3 { font-size: 1.2em; }
+        .method-card {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .method-header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .param-table th, .param-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+        .param-table th {
+            background: var(--code-bg);
+        }
+        code {
+            background: var(--code-bg);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+        }
+        pre {
+            background: var(--code-bg);
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        .deprecated {
+            background: #fff3f3;
+            border-left: 4px solid #ff4d4f;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .nav-list {
+            list-style: none;
+        }
+        .nav-list li {
+            margin: 5px 0;
+        }
+        .nav-list a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+        .nav-list a:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h2>目录</h2>
+        <ul class="nav-list">
+            <li><a href="#constructor">构造函数</a></li>
+            <li><a href="#properties">属性</a></li>
+            <li><a href="#connection">连接管理</a></li>
+            <li><a href="#user">用户与联系人管理</a></li>
+            <li><a href="#message">消息管理</a></li>
+            <li><a href="#database">数据库操作</a></li>
+            <li><a href="#event">事件处理</a></li>
+            <li><a href="#file">文件操作</a></li>
+            <li><a href="#other">其他功能</a></li>
+            <li><a href="#types">类型定义</a></li>
+            <li><a href="#deprecated">弃用方法</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h1>WeChatCore API 文档</h1>
+
+        <section id="constructor">
+            <h2>构造函数</h2>
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>constructor(options?: WcferryOptions)</h3>
+                </div>
+                <p>创建一个新的 Wcferry 实例。</p>
+                <h4>参数</h4>
+                <table class="param-table">
+                    <tr>
+                        <th>参数名</th>
+                        <th>类型</th>
+                        <th>必填</th>
+                        <th>默认值</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>port</td>
+                        <td>number</td>
+                        <td>否</td>
+                        <td>10086</td>
+                        <td>服务端口号</td>
+                    </tr>
+                    <tr>
+                        <td>host</td>
+                        <td>string</td>
+                        <td>否</td>
+                        <td>空</td>
+                        <td>如果为空，程序将尝试加载 wcferry.exe 和 *.dll</td>
+                    </tr>
+                    <tr>
+                        <td>cacheDir</td>
+                        <td>string</td>
+                        <td>否</td>
+                        <td>os.tmpdir()/wcferry</td>
+                        <td>临时文件缓存目录</td>
+                    </tr>
+                    <tr>
+                        <td>recvPyq</td>
+                        <td>boolean</td>
+                        <td>否</td>
+                        <td>false</td>
+                        <td>是否接收朋友圈消息</td>
+                    </tr>
+                    <tr>
+                        <td>service</td>
+                        <td>boolean</td>
+                        <td>否</td>
+                        <td>false</td>
+                        <td>是否启用 service 模式</td>
+                    </tr>
+                    <tr>
+                        <td>wcf_path</td>
+                        <td>string</td>
+                        <td>否</td>
+                        <td>undefined</td>
+                        <td>WCF SDK 路径</td>
+                    </tr>
+                    <tr>
+                        <td>debug</td>
+                        <td>boolean</td>
+                        <td>否</td>
+                        <td>false</td>
+                        <td>是否启用调试模式</td>
+                    </tr>
+                    <tr>
+                        <td>sigint</td>
+                        <td>boolean</td>
+                        <td>否</td>
+                        <td>true</td>
+                        <td>是否监听 Ctrl+C 事件</td>
+                    </tr>
+                    <tr>
+                        <td>wechat_dir</td>
+                        <td>string</td>
+                        <td>否</td>
+                        <td>undefined</td>
+                        <td>微信客户端文件管理目录</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section id="properties">
+            <h2>属性</h2>
+            <div class="method-card">
+                <h3>connected</h3>
+                <p>类型：<code>boolean</code></p>
+                <p>说明：获取当前是否已连接到 WCF RPC 服务器</p>
+            </div>
+            <div class="method-card">
+                <h3>msgReceiving</h3>
+                <p>类型：<code>boolean</code></p>
+                <p>说明：获取当前是否正在接收消息</p>
+            </div>
+        </section>
+
+        <section id="connection">
+            <h2>连接管理</h2>
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>start(): void</h3>
+                </div>
+                <p>启动 Wcferry 实例，建立与 WCF RPC 服务器的连接。</p>
+            </div>
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>stop(): void</h3>
+                </div>
+                <p>停止 Wcferry 实例，关闭连接并释放资源。</p>
+            </div>
+        </section>
+
+        <section id="user">
+            <h2>用户与联系人管理</h2>
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>isLogin(): boolean</h3>
+                </div>
+                <p>检查当前是否已登录。</p>
+                <p><strong>返回值</strong>：<code>boolean</code> - true 表示已登录，false 表示未登录</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>getSelfWxid(): string</h3>
+                </div>
+                <p>获取当前登录账号的 wxid。</p>
+                <p><strong>返回值</strong>：<code>string</code> - 登录账号的 wxid</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>getUserInfo(): UserInfo</h3>
+                </div>
+                <p>获取当前登录账号的个人信息。</p>
+                <p><strong>返回值</strong>：<code>UserInfo</code> - 用户信息对象</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>getContacts(): Contact[]</h3>
+                </div>
+                <p>获取完整的通讯录。</p>
+                <p><strong>返回值</strong>：<code>Contact[]</code> - 联系人数组</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>getContact(wxid: string): Contact | undefined</h3>
+                </div>
+                <p>通过 wxid 查询微信号昵称等信息。</p>
+                <table class="param-table">
+                    <tr>
+                        <th>参数名</th>
+                        <th>类型</th>
+                        <th>必填</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>wxid</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>要查询的微信号 wxid</td>
+                    </tr>
+                </table>
+                <p><strong>返回值</strong>：<code>Contact | undefined</code> - 如果找到联系人，返回 Contact 对象；否则返回 undefined</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>getChatRooms(): Contact[]</h3>
+                </div>
+                <p>获取群聊列表。</p>
+                <p><strong>返回值</strong>：<code>Contact[]</code> - 群聊联系人数组</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>getFriends(): Contact[]</h3>
+                </div>
+                <p>获取好友列表。</p>
+                <p><strong>返回值</strong>：<code>Contact[]</code> - 好友联系人数组</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>getChatRoomMembers(roomid: string, times?: number): Promise<Record<string, string>></h3>
+                </div>
+                <p>获取群成员列表。</p>
+                <table class="param-table">
+                    <tr>
+                        <th>参数名</th>
+                        <th>类型</th>
+                        <th>必填</th>
+                        <th>默认值</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>roomid</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>-</td>
+                        <td>群的 id</td>
+                    </tr>
+                    <tr>
+                        <td>times</td>
+                        <td>number</td>
+                        <td>否</td>
+                        <td>5</td>
+                        <td>重试次数</td>
+                    </tr>
+                </table>
+                <p><strong>返回值</strong>：<code>Promise<Record<string, string>></code> - 返回一个包含群成员 wxid 和昵称的对象</p>
+            </div>
+        </section>
+
+        <section id="message">
+            <h2>消息管理</h2>
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>sendTxt(msg: string, receiver: string, aters?: string): number</h3>
+                </div>
+                <p>发送文本消息。</p>
+                <table class="param-table">
+                    <tr>
+                        <th>参数名</th>
+                        <th>类型</th>
+                        <th>必填</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>msg</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>要发送的消息内容，支持换行符 \n</td>
+                    </tr>
+                    <tr>
+                        <td>receiver</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>消息接收人，wxid 或 roomid</td>
+                    </tr>
+                    <tr>
+                        <td>aters</td>
+                        <td>string</td>
+                        <td>否</td>
+                        <td>要 @ 的 wxid，多个用逗号分隔；notify@all 表示 @所有人</td>
+                    </tr>
+                </table>
+                <p><strong>返回值</strong>：<code>number</code> - 0 表示成功，其他表示失败</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>sendImage(image: string | Buffer | { type: 'Buffer'; data: number[] } | FileSavableInterface, receiver: string): Promise<number></h3>
+                </div>
+                <p>发送图片消息。</p>
+                <table class="param-table">
+                    <tr>
+                        <th>参数名</th>
+                        <th>类型</th>
+                        <th>必填</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>image</td>
+                        <td>string | Buffer | Object</td>
+                        <td>是</td>
+                        <td>图片资源的位置，可以是本地路径、URL、Buffer 或特定对象</td>
+                    </tr>
+                    <tr>
+                        <td>receiver</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>消息接收人，wxid 或 roomid</td>
+                    </tr>
+                </table>
+                <p><strong>返回值</strong>：<code>Promise<number></code> - 0 表示成功，其他表示失败</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>sendFile(file: string | Buffer | { type: 'Buffer'; data: number[] } | FileSavableInterface, receiver: string): Promise<number></h3>
+                </div>
+                <p>发送文件消息。</p>
+                <table class="param-table">
+                    <tr>
+                        <th>参数名</th>
+                        <th>类型</th>
+                        <th>必填</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>file</td>
+                        <td>string | Buffer | Object</td>
+                        <td>是</td>
+                        <td>文件资源的位置，可以是本地路径、URL、Buffer 或特定对象</td>
+                    </tr>
+                    <tr>
+                        <td>receiver</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>消息接收人，wxid 或 roomid</td>
+                    </tr>
+                </table>
+                <p><strong>返回值</strong>：<code>Promise<number></code> - 0 表示成功，其他表示失败</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>sendPat(roomid: string, wxid: string): number</h3>
+                </div>
+                <p>发送"拍一拍"消息。</p>
+                <table class="param-table">
+                    <tr>
+                        <th>参数名</th>
+                        <th>类型</th>
+                        <th>必填</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>roomid</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>群的 id</td>
+                    </tr>
+                    <tr>
+                        <td>wxid</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>要拍的群成员的 wxid</td>
+                    </tr>
+                </table>
+                <p><strong>返回值</strong>：<code>number</code> - 1 表示成功，其他表示失败</p>
+            </div>
+        </section>
+
+        <section id="database">
+            <h2>数据库操作</h2>
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>getDbNames(): string[]</h3>
+                </div>
+                <p>获取所有数据库名称。</p>
+                <p><strong>返回值</strong>：<code>string[]</code> - 数据库名称数组</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>getDbTables(db: string): DbTable[]</h3>
+                </div>
+                <p>获取指定数据库中的所有表。</p>
+                <table class="param-table">
+                    <tr>
+                        <th>参数名</th>
+                        <th>类型</th>
+                        <th>必填</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>db</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>数据库名称</td>
+                    </tr>
+                </table>
+                <p><strong>返回值</strong>：<code>DbTable[]</code> - 表名称数组</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>dbSqlQuery(db: string, sql: string): Record<string, string | number | Buffer | undefined>[]</h3>
+                </div>
+                <p>执行 SQL 查询。</p>
+                <table class="param-table">
+                    <tr>
+                        <th>参数名</th>
+                        <th>类型</th>
+                        <th>必填</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>db</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>数据库名称</td>
+                    </tr>
+                    <tr>
+                        <td>sql</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>要执行的 SQL 语句</td>
+                    </tr>
+                </table>
+                <p><strong>返回值</strong>：<code>Record<string, string | number | Buffer | undefined>[]</code> - 查询结果数组</p>
+            </div>
+        </section>
+
+        <section id="event">
+            <h2>事件处理</h2>
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>listening(callback: (msg: Message) => void): () => void</h3>
+                </div>
+                <p>注册消息回调监听函数。</p>
+                <table class="param-table">
+                    <tr>
+                        <th>参数名</th>
+                        <th>类型</th>
+                        <th>必填</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>callback</td>
+                        <td>(msg: Message) => void</td>
+                        <td>是</td>
+                        <td>监听函数，接收一个 Message 对象</td>
+                    </tr>
+                </table>
+                <p><strong>返回值</strong>：<code>() => void</code> - 返回一个用于注销监听的函数</p>
+                <pre><code class="javascript">const unsubscribe = wcferry.listening((msg) => {
+    console.log('收到消息:', msg);
+});
+
+// 取消监听
+unsubscribe();</code></pre>
+            </div>
+        </section>
+
+        <section id="file">
+            <h2>文件操作</h2>
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>downloadImage(msgid: string, dir: string, extra?: string, thumb?: string, times?: number): Promise<string></h3>
+                </div>
+                <p>下载图片消息。</p>
+                <table class="param-table">
+                    <tr>
+                        <th>参数名</th>
+                        <th>类型</th>
+                        <th>必填</th>
+                        <th>默认值</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>msgid</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>-</td>
+                        <td>消息中的 id</td>
+                    </tr>
+                    <tr>
+                        <td>dir</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>-</td>
+                        <td>保存图片的目录（目录不存在会出错）</td>
+                    </tr>
+                    <tr>
+                        <td>extra</td>
+                        <td>string</td>
+                        <td>否</td>
+                        <td>undefined</td>
+                        <td>消息中的 extra</td>
+                    </tr>
+                    <tr>
+                        <td>thumb</td>
+                        <td>string</td>
+                        <td>否</td>
+                        <td>undefined</td>
+                        <td>消息中的 thumb</td>
+                    </tr>
+                    <tr>
+                        <td>times</td>
+                        <td>number</td>
+                        <td>否</td>
+                        <td>30</td>
+                        <td>超时时间（秒）</td>
+                    </tr>
+                </table>
+                <p><strong>返回值</strong>：<code>Promise<string></code> - 成功返回存储路径；失败时抛出错误</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>getAudioMsg(msgid: string, dir: string, times?: number): Promise<string></h3>
+                </div>
+                <p>获取语音消息并转成 MP3。</p>
+                <table class="param-table">
+                    <tr>
+                        <th>参数名</th>
+                        <th>类型</th>
+                        <th>必填</th>
+                        <th>默认值</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>msgid</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>-</td>
+                        <td>语音消息 id</td>
+                    </tr>
+                    <tr>
+                        <td>dir</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>-</td>
+                        <td>MP3 保存目录（目录不存在会出错）</td>
+                    </tr>
+                    <tr>
+                        <td>times</td>
+                        <td>number</td>
+                        <td>否</td>
+                        <td>3</td>
+                        <td>超时时间（秒）</td>
+                    </tr>
+                </table>
+                <p><strong>返回值</strong>：<code>Promise<string></code> - 成功返回存储路径；失败时抛出错误</p>
+            </div>
+        </section>
+
+        <section id="other">
+            <h2>其他功能</h2>
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>acceptNewFriend(v3: string, v4: string, scene?: number): number</h3>
+                </div>
+                <p>通过好友申请。</p>
+                <table class="param-table">
+                    <tr>
+                        <th>参数名</th>
+                        <th>类型</th>
+                        <th>必填</th>
+                        <th>默认值</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>v3</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>-</td>
+                        <td>加密用户名（好友申请消息里 v3 开头的字符串）</td>
+                    </tr>
+                    <tr>
+                        <td>v4</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>-</td>
+                        <td>Ticket（好友申请消息里 v4 开头的字符串）</td>
+                    </tr>
+                    <tr>
+                        <td>scene</td>
+                        <td>number</td>
+                        <td>否</td>
+                        <td>30</td>
+                        <td>申请方式（好友申请消息里的 scene）</td>
+                    </tr>
+                </table>
+                <p><strong>返回值</strong>：<code>number</code> - 1 表示成功，其他表示失败</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <h3>receiveTransfer(wxid: string, transferid: string, transactionid: string): number</h3>
+                </div>
+                <p>接收转账。</p>
+                <table class="param-table">
+                    <tr>
+                        <th>参数名</th>
+                        <th>类型</th>
+                        <th>必填</th>
+                        <th>说明</th>
+                    </tr>
+                    <tr>
+                        <td>wxid</td>
+                        <td>string</td>
+                        <td>是</td>
+                        <td>转账消息里的发送人 wxid</td>
+                    </tr>
+                    <tr>
+                        <td>transferid</td>
+                        <td>string</td>
+                        <td>是</td>

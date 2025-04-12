@@ -17,12 +17,16 @@ export class Message {
   get type() {
     return this.message.type;
   }
-
+  // - get 关键字 : 表示这是一个 getter 方法，用于获取对象的属性值。
+  // - 作用 : 提供一个只读属性 isSelf ，返回 this.message.is_self 的值。
+  // - 调用方式 : 可以直接像访问属性一样调用，例如 message.isSelf 。
   get isSelf() {
     return this.message.is_self;
   }
-
-  isAt(wxid: string) {
+  // - 普通方法 : 这是一个普通的方法，需要传入参数 wxid 。
+  // - 作用 : 判断消息中是否提到了某个用户（ wxid ）。
+  // - 调用方式 : 需要像调用函数一样调用，例如 message.isAt('wxid_123456') 。
+  isAt(wxid: string) { // 用于判断消息中是否提到了某个用户（ wxid ）
     if (!this.isGroup) {
       return false;
     }
