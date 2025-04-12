@@ -14,9 +14,12 @@ const headers = {
 };
 
 export interface FileSavableInterface {
+// - 在 FileSavableInterface 接口中， save 方法返回一个 Promise ，表示文件保存操作是异步的。
+// - Promise 的解析值是一个对象，包含 path （文件路径）和 discard （清理函数），这两个值在异步操作完成后可用。
   save(dir?: string): Promise<{ path: string; discard: () => Promise<void> }>;
 }
-
+// - export 用于将模块中的内容（如变量、函数、类、接口等）暴露给其他模块。
+// - 其他模块可以通过 import 关键字导入这些内容。
 export class FileRef implements FileSavableInterface {
   /**
    * @param location location of the resource. can be
