@@ -3,7 +3,6 @@ import typescript from '@rollup/plugin-typescript';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
-import copy from 'rollup-plugin-copy';
 import globFast from 'fast-glob';
 import json from '@rollup/plugin-json';
 import { cleandir } from 'rollup-plugin-cleandir';
@@ -47,16 +46,8 @@ export default [
         sourceMap: false,
         tsconfig: './tsconfig.json',
       }),
-      copy({
-        targets: [
-          {
-            src: 'wcf-sdk/**/*',
-            dest: 'dist/wcf-sdk',
-          },
-        ],
-      }),
       json(),
-      process.env.NODE_ENV == 'production' ? terser() : null,
+      // process.env.NODE_ENV == 'production' ? terser() : null,
     ],
     external: [...external, 'url', 'path', 'fs'], // 如果有需要排除的外部依赖项，可以在这里添加
   },

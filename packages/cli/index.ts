@@ -15,6 +15,7 @@ program
   .description('start of wcf')
   .option('-p, --port <port>', 'set WCF SERVER PORT, default is 10086', '10086')
   .option('-d, --dir <dir>', 'WCF DLL PATH', '')
+  .option('-debug, --debug', 'debug mode')
   .option('-w, --wechat_dir <wechat_dir>', 'set the WeChat directory', '')
   .option('-f, --fontend', 'Is the program running in the foreground')
   .action(async (options) => {
@@ -28,6 +29,7 @@ program
       port: +options.port,
       wcf_path: options.dir || '',
       wechat_dir: options.wechat_dir || '',
+      debug: options.debug || false,
     });
     fs.writeFileSync(path.join(__dirname, 'wcferry.json'), JSON.stringify({ port: +options.port || 10086 }));
     if (options.fontend) {

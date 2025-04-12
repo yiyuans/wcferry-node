@@ -1,4 +1,4 @@
-syntax = "proto3";
+﻿syntax = "proto3";
 
 package wcf;
 option java_package = "com.iamteer";
@@ -102,7 +102,7 @@ message WxMsg
 message TextMsg
 {
     string msg      = 1; // 要发送的消息内容
-    string receiver = 2; // 消息接收人，当为群��可@
+    string receiver = 2; // 消息接收人，当为��时可@
     string aters    = 3; // 要@的人列表，逗号分隔
 }
 
@@ -182,6 +182,7 @@ message UserInfo
     string name   = 2; // 昵称
     string mobile = 3; // 手机号
     string home   = 4; // 文件/图片等父路径
+    string alias  = 5; // 修改后的wxid
 }
 
 message DecPath

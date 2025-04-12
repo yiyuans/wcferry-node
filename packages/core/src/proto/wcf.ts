@@ -3233,6 +3233,7 @@ export namespace wcf {
             name?: string;
             mobile?: string;
             home?: string;
+            alias?: string;
         }) {
             super();
             pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
@@ -3248,6 +3249,9 @@ export namespace wcf {
                 }
                 if ("home" in data && data.home != undefined) {
                     this.home = data.home;
+                }
+                if ("alias" in data && data.alias != undefined) {
+                    this.alias = data.alias;
                 }
             }
         }
@@ -3275,11 +3279,18 @@ export namespace wcf {
         set home(value: string) {
             pb_1.Message.setField(this, 4, value);
         }
+        get alias() {
+            return pb_1.Message.getFieldWithDefault(this, 5, "") as string;
+        }
+        set alias(value: string) {
+            pb_1.Message.setField(this, 5, value);
+        }
         static fromObject(data: {
             wxid?: string;
             name?: string;
             mobile?: string;
             home?: string;
+            alias?: string;
         }): UserInfo {
             const message = new UserInfo({});
             if (data.wxid != null) {
@@ -3294,6 +3305,9 @@ export namespace wcf {
             if (data.home != null) {
                 message.home = data.home;
             }
+            if (data.alias != null) {
+                message.alias = data.alias;
+            }
             return message;
         }
         toObject() {
@@ -3302,6 +3316,7 @@ export namespace wcf {
                 name?: string;
                 mobile?: string;
                 home?: string;
+                alias?: string;
             } = {};
             if (this.wxid != null) {
                 data.wxid = this.wxid;
@@ -3314,6 +3329,9 @@ export namespace wcf {
             }
             if (this.home != null) {
                 data.home = this.home;
+            }
+            if (this.alias != null) {
+                data.alias = this.alias;
             }
             return data;
         }
@@ -3329,6 +3347,8 @@ export namespace wcf {
                 writer.writeString(3, this.mobile);
             if (this.home.length)
                 writer.writeString(4, this.home);
+            if (this.alias.length)
+                writer.writeString(5, this.alias);
             if (!w)
                 return writer.getResultBuffer();
         }
@@ -3349,6 +3369,9 @@ export namespace wcf {
                         break;
                     case 4:
                         message.home = reader.readString();
+                        break;
+                    case 5:
+                        message.alias = reader.readString();
                         break;
                     default: reader.skipField();
                 }
